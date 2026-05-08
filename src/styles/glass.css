@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════════════
+   MANNERS — Apple Glass Effect System
+   Frosted glass cards with noise texture & inner glow
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Base Glass Panel ─── */
+.glass {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-lg) var(--saturate);
+  -webkit-backdrop-filter: var(--blur-lg) var(--saturate);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+/* Noise texture overlay for realism */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+/* Inner top highlight */
+.glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--glass-inner-glow),
+    rgba(255, 255, 255, 0.08),
+    var(--glass-inner-glow),
+    transparent
+  );
+  z-index: 2;
+  border-radius: inherit;
+}
+
+/* ─── Glass Intensity Variants ─── */
+.glass--subtle {
+  background: rgba(173, 216, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: var(--blur-md) var(--saturate);
+  -webkit-backdrop-filter: var(--blur-md) var(--saturate);
+}
+
+.glass--medium {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+}
+
+.glass--strong {
+  background: rgba(173, 216, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+  backdrop-filter: var(--blur-xl) var(--saturate);
+  -webkit-backdrop-filter: var(--blur-xl) var(--saturate);
+}
+
+/* ─── Interactive Glass (Cards) ─── */
+.glass--interactive {
+  transition: 
+    background var(--duration-normal) var(--ease-out-quart),
+    border-color var(--duration-normal) var(--ease-out-quart),
+    box-shadow var(--duration-normal) var(--ease-out-quart),
+    transform var(--duration-normal) var(--ease-out-quart);
+  cursor: pointer;
+  will-change: transform;
+}
+
+.glass--interactive:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transform: translateY(-2px);
+}
+
+.glass--interactive:active {
+  background: var(--glass-bg-active);
+  transform: translateY(0px) scale(0.98);
+  transition-duration: var(--duration-fast);
+}
+
+/* ─── Glass with Image ─── */
+.glass--image {
+  overflow: hidden;
+}
+
+.glass--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.glass--image:hover img {
+  transform: scale(1.04);
+}
+
+/* ─── Glass Overlay (for menus, modals) ─── */
+.glass-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 15, 26, 0.7);
+  backdrop-filter: var(--blur-xl) var(--saturate);
+  -webkit-backdrop-filter: var(--blur-xl) var(--saturate);
+  z-index: var(--z-overlay);
+}
+
+/* ─── Glass Panel Shadow ─── */
+.glass-shadow {
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.glass-shadow--elevated {
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+}

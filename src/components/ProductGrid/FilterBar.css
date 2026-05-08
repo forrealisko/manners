@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════
+   MANNERS — Filter Bar Styles (Minimal)
+   Compact — sits below header, auto-hides on scroll
+   ═══════════════════════════════════════════════════════ */
+
+.filter-bar {
+  padding: var(--space-2) var(--space-3);
+}
+
+/* ─── Filter Pills ─── */
+.filter-bar__pills {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: var(--space-1) 0;
+  justify-content: center;
+}
+
+.filter-bar__pills::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-bar__pill {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all var(--duration-fast) ease;
+  background: transparent;
+}
+
+.filter-bar__pill:hover {
+  color: var(--color-text-secondary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.filter-bar__pill--active {
+  color: var(--color-bg-primary);
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.filter-bar__pill--active:hover {
+  color: var(--color-bg-primary);
+}
+
+/* ─── Light mode adjustments ─── */
+[data-theme="light"] .filter-bar__pill {
+  border-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="light"] .filter-bar__pill:hover {
+  color: rgba(0, 0, 0, 0.65);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="light"] .filter-bar__pill--active {
+  background: var(--color-text-primary);
+  color: #fff;
+  border-color: var(--color-text-primary);
+}
+
+[data-theme="light"] .filter-bar__pill--active:hover {
+  color: #fff;
+}
