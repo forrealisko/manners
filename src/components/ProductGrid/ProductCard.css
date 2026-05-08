@@ -9,14 +9,16 @@
   cursor: pointer;
   opacity: 0;
   animation: cardSlideUp 0.5s var(--ease-out-expo) forwards;
-  min-width: 0; /* Prevent grid blowout */
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
 }
 
-/* ─── Image Container ─── */
+/* ─── Image Container — fills all space above the info text ─── */
 .product-card__media {
   position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
+  flex: 1;
+  min-height: 0;
   border-radius: var(--card-radius);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.04);

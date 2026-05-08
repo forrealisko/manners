@@ -1,12 +1,16 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Grid Styles
-   Row-by-row snap scrolling, Safari-compatible
+   Perfect 2x2 viewport-filling pages.
+   Each row = half the available height below header.
+   Row-by-row snap scrolling, no horizontal wobble.
    ═══════════════════════════════════════════════════════ */
 
 .product-grid-section {
-  position: relative;
-  height: 100vh;
-  height: 100dvh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
 }
 
@@ -14,13 +18,18 @@
 .snap-scroll-container {
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
 
-  /* Offset snap position so rows sit below the fixed header */
-  scroll-padding-top: calc(var(--header-height) + 6px);
+  /* Snap offset = header height + small breathing room */
+  scroll-padding-top: calc(var(--header-height) + 4px);
 
-  /* Hide scrollbar everywhere */
+  /* Kill horizontal rubber-banding on Safari */
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
+
+  /* Hide scrollbar */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -29,61 +38,64 @@
   display: none;
 }
 
-/* ─── Filter Bar — first snap point ─── */
-.filter-snap-point {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  width: 100%;
-  padding-top: var(--header-height);
-  background: var(--color-bg-primary);
-}
-
-[data-theme="light"] .filter-snap-point {
-  background: var(--color-bg-primary);
-}
-
-/* ─── Product Row — each row is a snap target ─── */
+/* ─── Product Row ─── */
 .product-row {
+  /* Each row = exactly half the available viewport below the header */
+  height: calc((100dvh - var(--header-height) - 12px) / 2);
+
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  padding: 0 var(--space-2);
-  max-width: 520px;
-  margin: 0 auto;
-  margin-bottom: var(--space-2);
+  gap: 6px;
+  padding: 0 6px;
 
-  /* Snap alignment */
+  /* Snap each row */
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
 
-/* First row gets a small top margin for breathing room below filter/header */
-.product-row:first-of-type {
-  margin-top: var(--space-1);
+/* First row: push below the fixed header */
+.product-row:first-child {
+  margin-top: calc(var(--header-height) + 4px);
 }
 
-/* Last row gets bottom padding so it can scroll fully into view */
-.product-row:last-of-type {
-  margin-bottom: calc(var(--header-height) + var(--space-8));
+/* Every pair of rows: add a tiny gap between pairs */
+.product-row:nth-child(odd) {
+  padding-bottom: 0;
+}
+
+.product-row:nth-child(even) {
+  margin-bottom: 4px;
+}
+
+/* Last row: enough bottom space to snap fully */
+.product-row:last-child {
+  margin-bottom: 50vh;
 }
 
 .product-row__empty {
-  /* invisible spacer for odd product counts */
+  /* Invisible spacer for odd product counts */
 }
 
-/* ─── Desktop ─── */
+/* ─── Tablet ─── */
 @media (min-width: 768px) {
   .product-row {
+    gap: 10px;
+    padding: 0 10px;
     max-width: 800px;
-    gap: var(--space-4);
-    padding: 0 var(--space-4);
-    margin-bottom: var(--space-4);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .product-row:first-child {
+    margin-top: calc(var(--header-height) + 8px);
   }
 }
 
+/* ─── Desktop ─── */
 @media (min-width: 1200px) {
   .product-row {
     max-width: 1000px;
-    gap: var(--space-5);
+    gap: 14px;
+    padding: 0 14px;
   }
 }
