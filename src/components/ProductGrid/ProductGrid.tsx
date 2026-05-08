@@ -7,7 +7,7 @@
    Filtered view: all products from that category in 2x2 pages
    ═══════════════════════════════════════════════════════ */
 
-import { useMemo, useRef, useCallback, useEffect, useState } from 'react';
+import { useMemo, useRef, useCallback, useState } from 'react';
 import { useAppStore } from '../../stores/appStore';
 import { products, type Product, type Category } from '../../data/products';
 import ProductCard from './ProductCard';

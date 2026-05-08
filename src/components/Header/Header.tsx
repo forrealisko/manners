@@ -186,9 +186,11 @@ function SearchOverlay() {
                           <div
                             className="search-results__thumb"
                             style={{
-                              background: product.images[0]
-                                ? `url(${product.images[0]}) center/contain no-repeat`
-                                : getPlaceholderGradient(product.category, 0),
+                              ...getPlaceholderGradient(product.category, 0, product.images[0]),
+                              backgroundImage: product.images[0] ? `url(${product.images[0]})` : 'none',
+                              backgroundPosition: 'center',
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat'
                             }}
                           />
                           <div className="search-results__info">
@@ -253,9 +255,11 @@ function CartOverlay({ onClose }: { onClose: () => void }) {
                   <div
                     className="cart-item__thumb"
                     style={{
-                      background: item.product.images[0]
-                        ? `url(${item.product.images[0]}) center/contain no-repeat`
-                        : getPlaceholderGradient(item.product.category, idx),
+                      ...getPlaceholderGradient(item.product.category, idx, item.product.images[0]),
+                      backgroundImage: item.product.images[0] ? `url(${item.product.images[0]})` : 'none',
+                      backgroundPosition: 'center',
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat'
                     }}
                   />
                   <div className="cart-item__details">

@@ -26,7 +26,7 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  const gradient = getPlaceholderGradient(product.category, 0);
+  const gradient = getPlaceholderGradient(product.category, 0, product.images[0]);
   const showPlaceholder = imageError || !product.images[0];
 
   const handleAddToCart = () => {
@@ -61,7 +61,7 @@ export default function ProductDetail() {
           {showPlaceholder ? (
             <div
               className="product-detail__placeholder"
-              style={{ background: gradient }}
+              style={gradient}
             >
               <span className="product-detail__placeholder-text">{product.name}</span>
             </div>

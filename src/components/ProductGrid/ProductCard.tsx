@@ -78,9 +78,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           {!product.inStock && (
             <span className="product-card__badge product-card__badge--sold-out">Sold Out</span>
           )}
-          {product.isSale && (
-            <span className="product-card__badge product-card__badge--sale">Sale</span>
-          )}
         </div>
       </div>
 
@@ -89,11 +86,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         <h3 className="product-card__name">{product.name}</h3>
         <div className="product-card__pricing">
           <span className="product-card__price">{formatPrice(product.price)}</span>
-          {product.isSale && product.salePrice && (
-            <span className="product-card__original-price">
-              {formatPrice(product.salePrice)}
-            </span>
-          )}
           {product.isBestseller && (
             <span className="product-card__tag">Bestseller</span>
           )}

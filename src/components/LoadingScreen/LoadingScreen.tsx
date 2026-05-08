@@ -4,7 +4,7 @@
    Slower animation, no progress bar
    ═══════════════════════════════════════════════════════ */
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './LoadingScreen.css';
 
 interface LoadingScreenProps {
@@ -13,7 +13,6 @@ interface LoadingScreenProps {
 
 export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [phase, setPhase] = useState<'hold' | 'expanding' | 'revealing' | 'done'>('hold');
-  const startTime = useRef(Date.now());
   const holdDuration = 2200; // hold the X for 2.2s
 
   const handleComplete = useCallback(() => {

@@ -21,9 +21,7 @@ export interface Product {
   season: string;
   inStock: boolean;
   isNew?: boolean;
-  isSale?: boolean;
   isBestseller?: boolean;
-  salePrice?: number;
 }
 
 export interface CartItem {
@@ -35,43 +33,7 @@ export interface CartItem {
 
 export type Category = 'caps' | 'tees' | 'jeans' | 'hoodies' | 'accessories';
 
-/* ─── Gradient placeholders for products without images ─── */
-const gradients: Record<Category, string[]> = {
-  caps: [
-    'linear-gradient(135deg, #2c3e50 0%, #4a6741 100%)',
-    'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-    'linear-gradient(135deg, #3d3d3d 0%, #1a1a1a 100%)',
-    'linear-gradient(135deg, #4a3728 0%, #2c1810 100%)',
-    'linear-gradient(135deg, #2d4a5a 0%, #1a2e38 100%)',
-  ],
-  tees: [
-    'linear-gradient(135deg, #f5f0e8 0%, #e8dfd0 100%)',
-    'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)',
-    'linear-gradient(135deg, #9caa8e 0%, #7a8c6e 100%)',
-    'linear-gradient(135deg, #c4a4a0 0%, #a08480 100%)',
-    'linear-gradient(135deg, #a3c4d9 0%, #8aaec5 100%)',
-  ],
-  jeans: [
-    'linear-gradient(135deg, #2c3e6b 0%, #1a2a4a 100%)',
-    'linear-gradient(135deg, #8ea4bf 0%, #6a88a5 100%)',
-    'linear-gradient(135deg, #222222 0%, #3a3a3a 100%)',
-    'linear-gradient(135deg, #1a2540 0%, #0f1830 100%)',
-    'linear-gradient(135deg, #4a6c8c 0%, #3a5670 100%)',
-  ],
-  hoodies: [
-    'linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%)',
-    'linear-gradient(135deg, #3a4a5c 0%, #263340 100%)',
-    'linear-gradient(135deg, #5a4a3a 0%, #3d3225 100%)',
-    'linear-gradient(135deg, #4a3d5c 0%, #2d2440 100%)',
-    'linear-gradient(135deg, #3d5a4a 0%, #264033 100%)',
-  ],
-  accessories: [
-    'linear-gradient(135deg, #b8956a 0%, #8a7050 100%)',
-    'linear-gradient(135deg, #e8dcc8 0%, #ccc0a8 100%)',
-    'linear-gradient(135deg, #c4a76c 0%, #a08a50 100%)',
-    'linear-gradient(135deg, #888888 0%, #5a5a5a 100%)',
-  ],
-};
+
 
 export const imageColors: Record<string, {hue: number, sat: number}> = {
   '/images/caps/cap1[UP].png': { hue: 16, sat: 15 },
@@ -532,7 +494,7 @@ export const categoryPrices: Record<string, number> = {
   hoodies: 256,
 };
 
-export const formatPrice = (price: number, currency: string = 'EUR'): string => {
+export const formatPrice = (price: number): string => {
   return `€${price}`;
 };
 
