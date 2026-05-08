@@ -22,6 +22,7 @@ export interface Product {
   inStock: boolean;
   isNew?: boolean;
   isBestseller?: boolean;
+  isRestocked?: boolean;
 }
 
 export interface CartItem {
@@ -169,7 +170,7 @@ export const products: Product[] = [
     description: '280gsm heavyweight cotton jersey. Boxy relaxed fit. Screen-printed logo on chest.',
     season: 'SS26',
     inStock: true,
-    isNew: false,
+    isRestocked: true,
   },
   {
     id: 'tee-002',

@@ -27,7 +27,8 @@
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  padding: 0 var(--space-4);
+  /* Match product grid's 6px side padding for icon alignment */
+  padding: 0 6px;
 }
 
 /* ─── Left & Right Groups ─── */

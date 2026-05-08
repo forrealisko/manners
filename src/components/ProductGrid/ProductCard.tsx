@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Card
-   Clean product image with name, price, badges
+   Clean product image with name, price, badges on image
    ═══════════════════════════════════════════════════════ */
 
 import { useState, useMemo } from 'react';
@@ -54,10 +54,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           </>
         )}
 
-        {/* Badges */}
+        {/* Badges — on the image only */}
         <div className="product-card__badges">
           {product.isBestseller && (
             <span className="product-card__badge product-card__badge--bestseller">Bestseller</span>
+          )}
+          {product.isRestocked && (
+            <span className="product-card__badge product-card__badge--restocked">Restocked</span>
           )}
           {product.isNew && (
             <span className="product-card__badge product-card__badge--new">New In</span>
@@ -68,21 +71,10 @@ export default function ProductCard({ product, index }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Product Info */}
+      {/* Product Info — just name + price, nothing else */}
       <div className="product-card__info">
         <h3 className="product-card__name">{product.name}</h3>
-        <div className="product-card__pricing">
-          <span className="product-card__price">{formatPrice(product.price)}</span>
-          {product.isBestseller && (
-            <span className="product-card__tag">Bestseller</span>
-          )}
-          {product.isNew && (
-            <span className="product-card__tag">New In</span>
-          )}
-          {!product.inStock && (
-            <span className="product-card__tag product-card__tag--sold-out">Sold Out</span>
-          )}
-        </div>
+        <span className="product-card__price">{formatPrice(product.price)}</span>
       </div>
     </article>
   );
