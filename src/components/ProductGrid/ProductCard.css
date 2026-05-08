@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Card Styles
-   Cards fill their snap-grid cell perfectly
+   Clean, equal-width cards inside row grid
    ═══════════════════════════════════════════════════════ */
 
 .product-card {
@@ -9,27 +9,23 @@
   cursor: pointer;
   opacity: 0;
   animation: cardSlideUp 0.5s var(--ease-out-expo) forwards;
-  min-height: 0;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  min-width: 0; /* Prevent grid blowout */
 }
 
-/* ─── Image Container — fills available space ─── */
+/* ─── Image Container ─── */
 .product-card__media {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
   border-radius: var(--card-radius);
   overflow: hidden;
-  position: relative;
   border: 1px solid rgba(255, 255, 255, 0.04);
-  /* The background gradient is applied via .product-card__media below */
   transition: border-color 0.4s ease, background 0.4s ease;
 }
 
+/* ─── Dynamic HSL gradient backgrounds ─── */
 .product-card__placeholder,
 .product-card__media {
-  /* Default to a generic dark color if variables are missing */
   background: linear-gradient(
     135deg,
     hsl(var(--prod-hue, 0), var(--prod-sat, 0%), 18%) 0%,
@@ -46,13 +42,20 @@
   );
 }
 
+[data-theme="light"] .product-card__media {
+  border-color: rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Product Image ─── */
 .product-card__image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   padding: var(--space-2);
   opacity: 0;
-  transition: 
+  transition:
     opacity 0.4s ease,
     transform 0.6s var(--ease-out-expo);
 }
@@ -65,7 +68,7 @@
   transform: scale(1.03);
 }
 
-/* ─── Placeholder ─── */
+/* ─── Placeholder (no image / loading) ─── */
 .product-card__placeholder {
   position: absolute;
   inset: 0;
@@ -90,50 +93,11 @@
   line-height: var(--leading-relaxed);
 }
 
-/* ─── Quick Add Button ─── */
-.product-card__quick-add {
-  position: absolute;
-  bottom: var(--space-2);
-  right: var(--space-2);
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--color-bg-primary);
-  border-radius: 50%;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: 
-    opacity 0.25s ease,
-    transform 0.25s var(--ease-spring),
-    background 0.15s ease;
-  z-index: 3;
-  backdrop-filter: var(--blur-sm);
-  -webkit-backdrop-filter: var(--blur-sm);
+[data-theme="light"] .product-card__placeholder-text {
+  color: rgba(0, 0, 0, 0.25);
 }
 
-.product-card:hover .product-card__quick-add {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.product-card__quick-add:hover {
-  background: #ffffff;
-  transform: scale(1.1) !important;
-}
-
-/* On mobile, always show quick add */
-@media (hover: none) {
-  .product-card__quick-add {
-    opacity: 1;
-    transform: scale(1);
-    background: rgba(255, 255, 255, 0.85);
-  }
-}
-
-/* ─── Badges ─── */
+/* ─── Badges (top-left) ─── */
 .product-card__badges {
   position: absolute;
   top: var(--space-2);
@@ -146,7 +110,7 @@
 
 .product-card__badge {
   display: inline-block;
-  padding: 2px 6px;
+  padding: 3px 8px;
   font-size: 8px;
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-wider);
@@ -166,14 +130,9 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-.product-card__badge--sale {
-  background: rgba(220, 60, 60, 0.85);
-  color: #fff;
-}
-
-/* ─── Product Info — compact ─── */
+/* ─── Product Info ─── */
 .product-card__info {
-  padding: var(--space-1) 0 0;
+  padding: var(--space-1) 2px 0;
   flex-shrink: 0;
 }
 
@@ -205,12 +164,6 @@
   letter-spacing: var(--tracking-wide);
 }
 
-.product-card__original-price {
-  font-size: 10px;
-  color: var(--color-text-tertiary);
-  text-decoration: line-through;
-}
-
 .product-card__tag {
   font-size: 8px;
   font-weight: var(--weight-medium);
@@ -219,15 +172,15 @@
   text-transform: uppercase;
 }
 
-[data-theme="light"] .product-card__name {
-  color: rgba(0, 0, 0, 0.65);
-}
-
-[data-theme="light"] .product-card__tag,
-[data-theme="light"] .product-card__original-price {
-  color: rgba(0, 0, 0, 0.45);
-}
-
 .product-card__tag--sold-out {
   color: var(--color-error);
+}
+
+/* ─── Light mode text contrast ─── */
+[data-theme="light"] .product-card__name {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] .product-card__tag {
+  color: rgba(0, 0, 0, 0.4);
 }

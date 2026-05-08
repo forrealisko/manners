@@ -1,10 +1,9 @@
 /* ═══════════════════════════════════════════════════════
-   MANNERS — Product Card (Racer-style)
-   Clean product image with name, price, quick-add
+   MANNERS — Product Card
+   Clean product image with name, price, badges
    ═══════════════════════════════════════════════════════ */
 
 import { useState, useMemo } from 'react';
-import { Plus } from 'lucide-react';
 import type { Product } from '../../data/products';
 import { getPlaceholderGradient, formatPrice } from '../../data/products';
 import { useAppStore } from '../../stores/appStore';
@@ -54,18 +53,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
             />
           </>
         )}
-
-        {/* Quick Add Button */}
-        <button
-          className="product-card__quick-add"
-          aria-label={`Quick add ${product.name}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            // TODO: Quick add to cart with default size/color
-          }}
-        >
-          <Plus size={16} strokeWidth={2} />
-        </button>
 
         {/* Badges */}
         <div className="product-card__badges">

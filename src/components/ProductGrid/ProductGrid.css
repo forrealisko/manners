@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Grid Styles
-   Snap-scrolling fullscreen pages
+   Row-by-row snap scrolling, Safari-compatible
    ═══════════════════════════════════════════════════════ */
 
 .product-grid-section {
@@ -15,11 +15,12 @@
   height: 100%;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-  scroll-padding-top: var(--header-height);
   -webkit-overflow-scrolling: touch;
-  
-  /* Hide scrollbar */
+
+  /* Offset snap position so rows sit below the fixed header */
+  scroll-padding-top: calc(var(--header-height) + 6px);
+
+  /* Hide scrollbar everywhere */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -28,73 +29,61 @@
   display: none;
 }
 
-/* ─── Filter Snap Point ─── */
+/* ─── Filter Bar — first snap point ─── */
 .filter-snap-point {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   width: 100%;
   padding-top: var(--header-height);
   background: var(--color-bg-primary);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="light"] .filter-snap-point {
-  border-bottom-color: rgba(0, 0, 0, 0.04);
+  background: var(--color-bg-primary);
 }
 
-/* ─── Continuous Grid ─── */
-.continuous-grid {
+/* ─── Product Row — each row is a snap target ─── */
+.product-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-2);
-  width: 100%;
-  max-width: 500px;
+  padding: 0 var(--space-2);
+  max-width: 520px;
   margin: 0 auto;
-  /* Reduced padding so it sits tightly under the filter bar */
-  padding: 0 var(--space-2) calc(var(--header-height) + var(--space-4));
+  margin-bottom: var(--space-2);
+
+  /* Snap alignment */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
-/* ─── Desktop: override to wider grid ─── */
+/* First row gets a small top margin for breathing room below filter/header */
+.product-row:first-of-type {
+  margin-top: var(--space-1);
+}
+
+/* Last row gets bottom padding so it can scroll fully into view */
+.product-row:last-of-type {
+  margin-bottom: calc(var(--header-height) + var(--space-8));
+}
+
+.product-row__empty {
+  /* invisible spacer for odd product counts */
+}
+
+/* ─── Desktop ─── */
 @media (min-width: 768px) {
-  .continuous-grid {
+  .product-row {
     max-width: 800px;
     gap: var(--space-4);
-    padding: 0 var(--space-4) calc(var(--header-height) + var(--space-6));
+    padding: 0 var(--space-4);
+    margin-bottom: var(--space-4);
   }
 }
 
 @media (min-width: 1200px) {
-  .continuous-grid {
+  .product-row {
     max-width: 1000px;
     gap: var(--space-5);
   }
-}
-
-/* ─── Page Indicator Dots ─── */
-.page-dots {
-  position: fixed;
-  right: var(--space-3);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  z-index: var(--z-cards);
-}
-
-.page-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-text-tertiary);
-  transition: all 0.25s ease;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-}
-
-.page-dot--active {
-  background: var(--color-text-primary);
-  height: 20px;
-  border-radius: 3px;
 }

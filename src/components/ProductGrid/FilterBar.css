@@ -1,25 +1,19 @@
 /* ═══════════════════════════════════════════════════════
-   MANNERS — Filter Bar Styles (Minimal)
-   Compact — sits below header, auto-hides on scroll
+   MANNERS — Filter Bar Styles
+   Even pill spacing, centered, clean
    ═══════════════════════════════════════════════════════ */
 
 .filter-bar {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2);
 }
 
 /* ─── Filter Pills ─── */
 .filter-bar__pills {
   display: flex;
   gap: var(--space-2);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: var(--space-1) 0;
   justify-content: center;
-}
-
-.filter-bar__pills::-webkit-scrollbar {
-  display: none;
+  flex-wrap: nowrap;
+  padding: 0;
 }
 
 .filter-bar__pill {
@@ -33,6 +27,7 @@
   white-space: nowrap;
   transition: all var(--duration-fast) ease;
   background: transparent;
+  flex-shrink: 0;
 }
 
 .filter-bar__pill:hover {
@@ -50,7 +45,7 @@
   color: var(--color-bg-primary);
 }
 
-/* ─── Light mode adjustments ─── */
+/* ─── Light mode ─── */
 [data-theme="light"] .filter-bar__pill {
   border-color: rgba(0, 0, 0, 0.12);
   color: rgba(0, 0, 0, 0.45);
@@ -69,4 +64,16 @@
 
 [data-theme="light"] .filter-bar__pill--active:hover {
   color: #fff;
+}
+
+/* ─── Small phones: tighter pills ─── */
+@media (max-width: 380px) {
+  .filter-bar__pill {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .filter-bar__pills {
+    gap: 6px;
+  }
 }
