@@ -14,6 +14,28 @@
   overflow: hidden;
 }
 
+/* ─── Hero Banner ─── */
+.hero-banner {
+  /* Same height as a product row = half the available space */
+  height: calc((100dvh - var(--header-height) - 12px) / 2);
+  margin-top: calc(var(--header-height) + 4px);
+  margin-bottom: 4px;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  margin-left: 6px;
+  margin-right: 6px;
+
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.hero-banner__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* ─── Snap Scroll Container ─── */
 .snap-scroll-container {
   height: 100%;
@@ -53,9 +75,14 @@
   scroll-snap-stop: always;
 }
 
-/* First row: push below the fixed header */
+/* First row: push below the fixed header (when no banner) */
 .product-row:first-child {
   margin-top: calc(var(--header-height) + 4px);
+}
+
+/* When banner is present, the first product row doesn't need header offset */
+.hero-banner + .product-row {
+  margin-top: 0;
 }
 
 /* Every pair of rows: add a tiny gap between pairs */

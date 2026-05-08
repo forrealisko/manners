@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Grid
-   Full-viewport 2x2 pages. Category via burger menu only.
+   Full-viewport 2x2 pages. Category via burger menu.
+   "All" view has a hero banner as the first snap row.
    ═══════════════════════════════════════════════════════ */
 
 import { useMemo } from 'react';
@@ -14,7 +15,6 @@ export default function ProductGrid() {
 
   const displayProducts = useMemo((): Product[] => {
     if (activeFilter === 'all') {
-      // Hero grid: cap, tee, jeans, jeans2
       const cap = products.find((p) => p.category === 'caps');
       const tee = products.find((p) => p.category === 'tees');
       const jeans = products.find((p) => p.category === 'jeans');
@@ -33,9 +33,22 @@ export default function ProductGrid() {
     return result;
   }, [displayProducts]);
 
+  const showBanner = activeFilter === 'all';
+
   return (
     <section className="product-grid-section" id="product-grid-section">
       <div className="snap-scroll-container" id="product-grid">
+        {/* Hero banner — only on "All" view */}
+        {showBanner && (
+          <div className="hero-banner">
+            <img
+              src="/images/banner.webp"
+              alt="manners SS26 Collection"
+              className="hero-banner__image"
+            />
+          </div>
+        )}
+
         {rows.map((row, rowIdx) => (
           <div className="product-row" key={`row-${activeFilter}-${rowIdx}`}>
             {row.map((product, colIdx) => (
