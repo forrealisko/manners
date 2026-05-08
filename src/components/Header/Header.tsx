@@ -6,7 +6,7 @@
    ═══════════════════════════════════════════════════════ */
 
 import { useState, useRef, useEffect } from 'react';
-import { Search, User, ShoppingBag, Menu, X, Trash2, Plus, Minus } from 'lucide-react';
+import { Search, User, ShoppingBag, Menu, X, Trash2, Plus, Minus, Sun, Moon } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useCartStore } from '../../stores/cartStore';
 import { searchProducts, formatPrice, getPlaceholderGradient } from '../../data/products';
@@ -15,10 +15,11 @@ import Checkout from '../Checkout/Checkout';
 import './Header.css';
 
 export default function Header() {
-  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch, toggleTheme } = useAppStore();
+  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch } = useAppStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   return (
     <>
@@ -36,6 +37,7 @@ export default function Header() {
             </button>
             <button
               className="header__action"
+              onClick={() => setIsAccountOpen(true)}
               aria-label="Customer portal"
               id="account-btn"
             >
@@ -43,10 +45,10 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Center: Brand — click to toggle theme */}
-          <button className="header__brand" onClick={toggleTheme} id="brand-logo" aria-label="Toggle dark/light mode">
+          {/* Center: Brand */}
+          <div className="header__brand" id="brand-logo">
             <span className="header__brand-text">m a n n e r s</span>
-          </button>
+          </div>
 
           {/* Right: Cart + Menu */}
           <div className="header__right">
@@ -96,6 +98,9 @@ export default function Header() {
 
       {/* Checkout Overlay */}
       {isCheckoutOpen && <Checkout onClose={() => setIsCheckoutOpen(false)} />}
+
+      {/* Account Overlay */}
+      {isAccountOpen && <AccountOverlay onClose={() => setIsAccountOpen(false)} />}
     </>
   );
 }
@@ -333,7 +338,7 @@ function CartOverlay({ onClose, onCheckout }: { onClose: () => void; onCheckout:
 
 /* ─── Full-screen Menu ─── */
 function MenuOverlay() {
-  const { setMenuOpen, setActiveFilter } = useAppStore();
+  const { setMenuOpen, setActiveFilter, theme, toggleTheme } = useAppStore();
 
   const handleNav = (filter: string | null) => {
     if (filter !== null) {
@@ -363,6 +368,9 @@ function MenuOverlay() {
       <div className="menu-overlay__backdrop" onClick={() => setMenuOpen(false)} />
       <nav className="menu-overlay__panel">
         <div className="menu-overlay__header">
+          <button className="menu-overlay__theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === 'dark' ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+          </button>
           <button className="menu-overlay__close" onClick={() => setMenuOpen(false)}>
             <X size={22} strokeWidth={1.5} />
           </button>
@@ -403,6 +411,155 @@ function MenuOverlay() {
           <a href="https://tiktok.com" target="_blank" rel="noopener" className="menu-overlay__social">TikTok</a>
         </div>
       </nav>
+    </div>
+  );
+}
+
+/* ─── Account Overlay ─── */
+function AccountOverlay({ onClose }: { onClose: () => void }) {
+  const [view, setView] = useState<'login' | 'register' | 'forgot' | 'profile'>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  if (isLoggedIn) {
+    return (
+      <div className="account-overlay" id="account-overlay">
+        <div className="account-overlay__backdrop" onClick={onClose} />
+        <div className="account-overlay__panel">
+          <div className="account-overlay__header">
+            <h2 className="account-overlay__title">My Account</h2>
+            <button className="account-overlay__close" onClick={onClose}>
+              <X size={22} strokeWidth={1.5} />
+            </button>
+          </div>
+
+          <div className="account-overlay__profile">
+            <div className="account-overlay__avatar">
+              <User size={32} strokeWidth={1} />
+            </div>
+            <div className="account-overlay__profile-info">
+              <span className="account-overlay__profile-name">Member</span>
+              <span className="account-overlay__profile-points">0 Points</span>
+            </div>
+          </div>
+
+          <div className="account-overlay__sections">
+            <div className="account-overlay__section">
+              <label className="account-overlay__label">Birthday</label>
+              <input type="date" className="account-overlay__input" />
+            </div>
+
+            <div className="account-overlay__section">
+              <label className="account-overlay__label">Phone</label>
+              <input type="tel" className="account-overlay__input" placeholder="+421..." />
+            </div>
+
+            <div className="account-overlay__menu-list">
+              <button className="account-overlay__menu-item">Order History</button>
+              <button className="account-overlay__menu-item">Saved Addresses</button>
+              <button className="account-overlay__menu-item">Wishlist</button>
+              <button className="account-overlay__menu-item">Preferences</button>
+            </div>
+
+            <button
+              className="account-overlay__logout"
+              onClick={() => setIsLoggedIn(false)}
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="account-overlay" id="account-overlay">
+      <div className="account-overlay__backdrop" onClick={onClose} />
+      <div className="account-overlay__panel">
+        <div className="account-overlay__header">
+          <h2 className="account-overlay__title">
+            {view === 'login' && 'Sign In'}
+            {view === 'register' && 'Create Account'}
+            {view === 'forgot' && 'Reset Password'}
+          </h2>
+          <button className="account-overlay__close" onClick={onClose}>
+            <X size={22} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        <div className="account-overlay__content">
+          {view === 'login' && (
+            <form className="account-form" onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
+              <div className="account-form__group">
+                <label className="account-form__label">Email</label>
+                <input type="email" className="account-form__input" placeholder="your@email.com" required />
+              </div>
+              <div className="account-form__group">
+                <label className="account-form__label">Password</label>
+                <input type="password" className="account-form__input" placeholder="••••••••" required />
+              </div>
+              <button type="submit" className="account-form__submit">Sign In</button>
+              <div className="account-form__links">
+                <button type="button" className="account-form__link" onClick={() => setView('forgot')}>
+                  Forgot password?
+                </button>
+                <button type="button" className="account-form__link" onClick={() => setView('register')}>
+                  Create account
+                </button>
+              </div>
+            </form>
+          )}
+
+          {view === 'register' && (
+            <form className="account-form" onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
+              <div className="account-form__row">
+                <div className="account-form__group">
+                  <label className="account-form__label">First Name</label>
+                  <input type="text" className="account-form__input" placeholder="First" required />
+                </div>
+                <div className="account-form__group">
+                  <label className="account-form__label">Last Name</label>
+                  <input type="text" className="account-form__input" placeholder="Last" required />
+                </div>
+              </div>
+              <div className="account-form__group">
+                <label className="account-form__label">Email</label>
+                <input type="email" className="account-form__input" placeholder="your@email.com" required />
+              </div>
+              <div className="account-form__group">
+                <label className="account-form__label">Password</label>
+                <input type="password" className="account-form__input" placeholder="Min 8 characters" required minLength={8} />
+              </div>
+              <div className="account-form__group">
+                <label className="account-form__label">Birthday <span className="account-form__optional">(for rewards)</span></label>
+                <input type="date" className="account-form__input" />
+              </div>
+              <button type="submit" className="account-form__submit">Create Account</button>
+              <div className="account-form__links">
+                <button type="button" className="account-form__link" onClick={() => setView('login')}>
+                  Already have an account? Sign in
+                </button>
+              </div>
+            </form>
+          )}
+
+          {view === 'forgot' && (
+            <form className="account-form" onSubmit={(e) => { e.preventDefault(); setView('login'); }}>
+              <p className="account-form__hint">Enter your email and we'll send you a reset link.</p>
+              <div className="account-form__group">
+                <label className="account-form__label">Email</label>
+                <input type="email" className="account-form__input" placeholder="your@email.com" required />
+              </div>
+              <button type="submit" className="account-form__submit">Send Reset Link</button>
+              <div className="account-form__links">
+                <button type="button" className="account-form__link" onClick={() => setView('login')}>
+                  Back to sign in
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

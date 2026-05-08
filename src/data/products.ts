@@ -37,11 +37,11 @@ export type Category = 'caps' | 'tees' | 'jeans' | 'hoodies' | 'accessories';
 
 /* ─── Category Features ─── */
 export const categoryFeatures: Record<string, string[]> = {
-  caps: ['100% Cotton', 'Adjustable Strap', 'One Size Fits Most', 'Garment Dyed'],
-  tees: ['100% Organic Cotton', 'Heavyweight 280gsm', 'Boxy Relaxed Fit', 'Screen Printed'],
-  jeans: ['100% Cotton Denim', 'Selvedge Construction', 'Chain-Stitched Hem', 'Copper Rivets'],
-  hoodies: ['100% Cotton Fleece', 'Heavyweight 450gsm', 'Oversized Fit', 'Double-Layered Hood'],
-  accessories: ['Premium Materials', 'Handcrafted Details', 'Tarnish Resistant'],
+  caps: ['100% Cotton Canvas', 'Garment Dyed', 'Adjustable Strap', 'Tonal Embroidered Logo', 'One Size Fits All'],
+  tees: ['100% Organic Cotton', 'Heavyweight 280gsm', 'Boxy Relaxed Fit', 'Pre-Shrunk', 'Screen Printed Graphics'],
+  jeans: ['100% Cotton Selvedge Denim', 'Chain-Stitched Hem', 'Copper Hardware', 'Raw Indigo Dye', 'Made in Portugal'],
+  hoodies: ['100% Brushed-Back Fleece', 'Heavyweight 450gsm', 'Double-Layered Hood', 'Oversized Fit', 'YKK Zippers'],
+  accessories: ['Premium Materials', 'Handcrafted Details', 'Tarnish Resistant', 'Made to Last'],
 };
 
 /* ─── Size Guide Measurements (cm) ─── */
@@ -73,7 +73,6 @@ export const categoryMeasurements: Record<string, { headers: string[]; rows: Mea
       { size: 'M', chest: '55', length: '71', sleeve: '23' },
       { size: 'L', chest: '58', length: '73', sleeve: '24' },
       { size: 'XL', chest: '62', length: '75', sleeve: '25' },
-      { size: 'XXL', chest: '66', length: '77', sleeve: '26' },
     ],
   },
   jeans: {
@@ -147,7 +146,7 @@ export const products: Product[] = [
     price: 32,
     currency: 'EUR',
     images: ['/images/caps/cap1[UP].png'],
-    sizes: ['S/M', 'L/XL'],
+    sizes: ['One Size'],
     colors: [
       { name: 'Stone', hex: '#b8a99a' },
       { name: 'Washed Black', hex: '#2c2c2c' },
@@ -197,7 +196,7 @@ export const products: Product[] = [
     price: 32,
     currency: 'EUR',
     images: ['/images/caps/cap-04.jpg'],
-    sizes: ['S/M', 'L/XL'],
+    sizes: ['One Size'],
     colors: [
       { name: 'Olive', hex: '#6b7c4e' },
       { name: 'Sand', hex: '#d4c5a9' },
@@ -232,7 +231,7 @@ export const products: Product[] = [
     price: 64,
     currency: 'EUR',
     images: ['/images/tees/tee[UP].png'],
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Off-White', hex: '#f5f0e8' },
       { name: 'Washed Black', hex: '#1a1a1a' },
@@ -699,7 +698,7 @@ export const products: Product[] = [
     price: 256,
     currency: 'EUR',
     images: [],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    sizes: ['S', 'M', 'L', 'XL'],
     colors: [{ name: 'Navy', hex: '#1a2a40' }],
     description: 'Snap-front coaches jacket in water-resistant nylon. Mesh lined.',
     season: 'SS26',
