@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════
    MANNERS — Product Grid
    Full-viewport 2x2 pages. Category via burger menu.
-   "All" view has a hero banner as the first snap row.
+   "All" view has a hero banner + discovery footer.
    ═══════════════════════════════════════════════════════ */
 
 import { useMemo } from 'react';
@@ -11,7 +11,7 @@ import ProductCard from './ProductCard';
 import './ProductGrid.css';
 
 export default function ProductGrid() {
-  const { activeFilter } = useAppStore();
+  const { activeFilter, setActiveFilter } = useAppStore();
 
   const displayProducts = useMemo((): Product[] => {
     if (activeFilter === 'all') {
@@ -34,6 +34,13 @@ export default function ProductGrid() {
   }, [displayProducts]);
 
   const showBanner = activeFilter === 'all';
+
+  const handleCategoryNav = (cat: string) => {
+    setActiveFilter(cat as Category);
+    // Scroll back to top
+    const container = document.getElementById('product-grid');
+    if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <section className="product-grid-section" id="product-grid-section">
@@ -61,6 +68,32 @@ export default function ProductGrid() {
             {row.length < 2 && <div className="product-row__empty" />}
           </div>
         ))}
+
+        {/* ─── Discovery Footer ─── */}
+        <div className="discovery-footer">
+          <div className="discovery-footer__content">
+            <h2 className="discovery-footer__title">What are you looking for?</h2>
+            <div className="discovery-footer__line" />
+            <nav className="discovery-footer__nav">
+              {[
+                { key: 'caps', label: 'Caps', price: '€32' },
+                { key: 'tees', label: 'Tees', price: '€64' },
+                { key: 'jeans', label: 'Jeans', price: '€128' },
+                { key: 'hoodies', label: 'Hoodies', price: '€256' },
+                { key: 'accessories', label: 'Accessories', price: 'from €28' },
+              ].map((cat) => (
+                <button
+                  key={cat.key}
+                  className="discovery-footer__item"
+                  onClick={() => handleCategoryNav(cat.key)}
+                >
+                  <span className="discovery-footer__item-label">{cat.label}</span>
+                  <span className="discovery-footer__item-price">{cat.price}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -11,12 +11,14 @@ import { useAppStore } from '../../stores/appStore';
 import { useCartStore } from '../../stores/cartStore';
 import { searchProducts, formatPrice, getPlaceholderGradient } from '../../data/products';
 import type { Product } from '../../data/products';
+import Checkout from '../Checkout/Checkout';
 import './Header.css';
 
 export default function Header() {
   const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch, toggleTheme } = useAppStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   return (
     <>
@@ -82,7 +84,18 @@ export default function Header() {
       {isMenuOpen && <MenuOverlay />}
 
       {/* Cart Overlay */}
-      {isCartOpen && <CartOverlay onClose={() => setIsCartOpen(false)} />}
+      {isCartOpen && (
+        <CartOverlay
+          onClose={() => setIsCartOpen(false)}
+          onCheckout={() => {
+            setIsCartOpen(false);
+            setIsCheckoutOpen(true);
+          }}
+        />
+      )}
+
+      {/* Checkout Overlay */}
+      {isCheckoutOpen && <Checkout onClose={() => setIsCheckoutOpen(false)} />}
     </>
   );
 }
@@ -221,7 +234,7 @@ function SearchOverlay() {
 }
 
 /* ─── Cart Slide-out Panel ─── */
-function CartOverlay({ onClose }: { onClose: () => void }) {
+function CartOverlay({ onClose, onCheckout }: { onClose: () => void; onCheckout: () => void }) {
   const { items, removeItem, updateQuantity, getTotal, getItemCount, clearCart } = useCartStore();
 
   return (
@@ -304,7 +317,7 @@ function CartOverlay({ onClose }: { onClose: () => void }) {
                 <span className="cart-overlay__total-label">Total</span>
                 <span className="cart-overlay__total-amount">{formatPrice(getTotal())}</span>
               </div>
-              <button className="cart-overlay__checkout">
+              <button className="cart-overlay__checkout" onClick={onCheckout}>
                 Checkout — {formatPrice(getTotal())}
               </button>
               <button className="cart-overlay__clear" onClick={clearCart}>

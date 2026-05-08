@@ -3,7 +3,7 @@
    Premium clothing brand · manners.art
    ═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
   /* ─── Color Palette ─── */
@@ -43,6 +43,7 @@
   /* ─── Typography ─── */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   --font-brand: 'Helvetica Neue', 'Inter', Arial, sans-serif;
+  --font-handwritten: 'Caveat', cursive;
 
   --text-xs: 0.6875rem;    /* 11px */
   --text-sm: 0.8125rem;    /* 13px */

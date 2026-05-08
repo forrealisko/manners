@@ -1,14 +1,20 @@
 /* ═══════════════════════════════════════════════════════
-   MANNERS — Product Detail Overlay
-   Expands from grid to show full product info
+   MANNERS — Product Detail
+   Hero image → scrolling gallery → features → measurements → size → add to bag
    ═══════════════════════════════════════════════════════ */
 
-import { useState } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ArrowLeft, Minus, Plus, ShoppingBag, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useCartStore } from '../../stores/cartStore';
-import { getProductById, formatPrice, getPlaceholderGradient } from '../../data/products';
-import type { ProductColor } from '../../data/products';
+import {
+  getProductById,
+  formatPrice,
+  getPlaceholderGradient,
+  categoryFeatures,
+  categoryMeasurements,
+} from '../../data/products';
+import type { ProductColor, MeasurementRow } from '../../data/products';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -19,15 +25,21 @@ export default function ProductDetail() {
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null);
-  const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [imageError, setImageError] = useState(false);
   const [added, setAdded] = useState(false);
+  const [showMeasurements, setShowMeasurements] = useState(false);
+
+  const gradient = useMemo(
+    () => product ? getPlaceholderGradient(product.category, 0, product.images[0]) : {},
+    [product]
+  );
 
   if (!product) return null;
 
-  const gradient = getPlaceholderGradient(product.category, 0, product.images[0]);
   const showPlaceholder = imageError || !product.images[0];
+  const features = product.features || categoryFeatures[product.category] || [];
+  const measurements = categoryMeasurements[product.category];
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
@@ -42,87 +54,134 @@ export default function ProductDetail() {
     setSelectedSize(null);
     setSelectedColor(null);
     setQuantity(1);
-    setCurrentImage(0);
     setAdded(false);
+    setShowMeasurements(false);
+  };
+
+  // Get measurement value by key
+  const getMeasurement = (row: MeasurementRow, key: string): string => {
+    const k = key.toLowerCase() as keyof MeasurementRow;
+    return (row[k] as string) || '—';
   };
 
   return (
-    <div className="product-detail" id="product-detail">
-      <div className="product-detail__backdrop" onClick={handleClose} />
+    <div className="pd" id="product-detail">
+      <div className="pd__backdrop" onClick={handleClose} />
 
-      <div className="product-detail__panel">
-        {/* Close Button */}
-        <button className="product-detail__close" onClick={handleClose} aria-label="Go back">
-          <ArrowLeft size={22} strokeWidth={1.5} />
-        </button>
+      <div className="pd__panel">
+        {/* ─── Scrollable Content ─── */}
+        <div className="pd__scroll">
 
-        {/* Image Gallery */}
-        <div className="product-detail__gallery">
-          {showPlaceholder ? (
-            <div
-              className="product-detail__placeholder"
-              style={gradient}
-            >
-              <span className="product-detail__placeholder-text">{product.name}</span>
-            </div>
-          ) : (
-            <img
-              src={product.images[currentImage]}
-              alt={product.name}
-              className="product-detail__image"
-              onError={() => setImageError(true)}
-            />
-          )}
+          {/* Close / Back */}
+          <button className="pd__close" onClick={handleClose} aria-label="Go back">
+            <ArrowLeft size={22} strokeWidth={1.5} />
+          </button>
 
-          {/* Image nav arrows */}
-          {product.images.length > 1 && !showPlaceholder && (
-            <>
-              <button
-                className="product-detail__nav product-detail__nav--prev"
-                onClick={() => setCurrentImage((prev) => (prev - 1 + product.images.length) % product.images.length)}
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                className="product-detail__nav product-detail__nav--next"
-                onClick={() => setCurrentImage((prev) => (prev + 1) % product.images.length)}
-              >
-                <ChevronRight size={20} />
-              </button>
-            </>
-          )}
+          {/* ─── Hero Image (will be 3D later) ─── */}
+          <div className="pd__hero" style={gradient}>
+            {showPlaceholder ? (
+              <div className="pd__hero-placeholder">
+                <span className="pd__hero-placeholder-text">{product.name}</span>
+              </div>
+            ) : (
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="pd__hero-image"
+                onError={() => setImageError(true)}
+              />
+            )}
+          </div>
 
-          {/* Image dots */}
+          {/* ─── Gallery (additional images scroll vertically) ─── */}
           {product.images.length > 1 && (
-            <div className="product-detail__dots">
-              {product.images.map((_, i) => (
-                <button
-                  key={i}
-                  className={`product-detail__dot ${i === currentImage ? 'product-detail__dot--active' : ''}`}
-                  onClick={() => setCurrentImage(i)}
-                />
+            <div className="pd__gallery">
+              {product.images.slice(1).map((img, i) => (
+                <div key={i} className="pd__gallery-item">
+                  <img
+                    src={img}
+                    alt={`${product.name} view ${i + 2}`}
+                    className="pd__gallery-image"
+                  />
+                </div>
               ))}
             </div>
           )}
-        </div>
 
-        {/* Product Info */}
-        <div className="product-detail__info">
-          <h2 className="product-detail__name">{product.name}</h2>
-          <p className="product-detail__price">{formatPrice(product.price)}</p>
-          <p className="product-detail__description">{product.description}</p>
+          {/* ─── Product Info ─── */}
+          <div className="pd__info">
+            <div className="pd__info-header">
+              <h2 className="pd__name">{product.name}</h2>
+              <span className="pd__price">{formatPrice(product.price)}</span>
+            </div>
+            <p className="pd__description">{product.description}</p>
+          </div>
 
-          {/* Colors */}
-          {product.colors.length > 0 && (
-            <div className="product-detail__section">
-              <label className="product-detail__label">Color</label>
-              <div className="product-detail__colors">
+          {/* ─── Features Bullets ─── */}
+          {features.length > 0 && (
+            <div className="pd__features">
+              {features.map((f, i) => (
+                <div key={i} className="pd__feature">
+                  <span className="pd__feature-dot" />
+                  <span className="pd__feature-text">{f}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ─── Measurements Accordion ─── */}
+          {measurements && measurements.headers.length > 1 && (
+            <div className="pd__measurements">
+              <button
+                className={`pd__measurements-toggle ${showMeasurements ? 'pd__measurements-toggle--open' : ''}`}
+                onClick={() => setShowMeasurements(!showMeasurements)}
+              >
+                <span>Size Guide</span>
+                <ChevronDown size={16} />
+              </button>
+
+              {showMeasurements && (
+                <div className="pd__measurements-table-wrap">
+                  <table className="pd__measurements-table">
+                    <thead>
+                      <tr>
+                        {measurements.headers.map((h) => (
+                          <th key={h}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {measurements.rows.map((row) => (
+                        <tr
+                          key={row.size}
+                          className={selectedSize === row.size ? 'pd__measurements-row--active' : ''}
+                        >
+                          {measurements.headers.map((h) => (
+                            <td key={h}>
+                              {h === 'Size' ? row.size : getMeasurement(row, h)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <span className="pd__measurements-unit">All measurements in cm</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ─── Colors ─── */}
+          {product.colors.length > 1 && (
+            <div className="pd__section">
+              <label className="pd__label">Color</label>
+              <div className="pd__colors">
                 {product.colors.map((color) => (
                   <button
                     key={color.hex}
-                    className={`product-detail__color-swatch ${
+                    className={`pd__color-swatch ${
                       (selectedColor?.hex || product.colors[0].hex) === color.hex
-                        ? 'product-detail__color-swatch--active'
+                        ? 'pd__color-swatch--active'
                         : ''
                     }`}
                     style={{ background: color.hex }}
@@ -134,16 +193,17 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* Sizes */}
-          <div className="product-detail__section">
-            <label className="product-detail__label">
-              Size {!selectedSize && <span className="product-detail__required">— Select a size</span>}
+          {/* ─── Sizes ─── */}
+          <div className="pd__section">
+            <label className="pd__label">
+              Size
+              {!selectedSize && <span className="pd__required"> — Select</span>}
             </label>
-            <div className="product-detail__sizes">
+            <div className="pd__sizes">
               {product.sizes.map((size) => (
                 <button
                   key={size}
-                  className={`product-detail__size ${selectedSize === size ? 'product-detail__size--active' : ''}`}
+                  className={`pd__size ${selectedSize === size ? 'pd__size--active' : ''}`}
                   onClick={() => setSelectedSize(size)}
                 >
                   {size}
@@ -152,19 +212,19 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Quantity */}
-          <div className="product-detail__section">
-            <label className="product-detail__label">Quantity</label>
-            <div className="product-detail__quantity">
+          {/* ─── Quantity ─── */}
+          <div className="pd__section">
+            <label className="pd__label">Quantity</label>
+            <div className="pd__quantity">
               <button
-                className="product-detail__qty-btn"
+                className="pd__qty-btn"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
               >
                 <Minus size={14} />
               </button>
-              <span className="product-detail__qty-value">{quantity}</span>
+              <span className="pd__qty-value">{quantity}</span>
               <button
-                className="product-detail__qty-btn"
+                className="pd__qty-btn"
                 onClick={() => setQuantity(quantity + 1)}
               >
                 <Plus size={14} />
@@ -172,9 +232,14 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Add to Cart */}
+          {/* Bottom spacer for sticky button */}
+          <div style={{ height: 80 }} />
+        </div>
+
+        {/* ─── Sticky Add to Bag ─── */}
+        <div className="pd__sticky-bar">
           <button
-            className={`product-detail__add-btn ${!selectedSize ? 'product-detail__add-btn--disabled' : ''} ${added ? 'product-detail__add-btn--added' : ''}`}
+            className={`pd__add-btn ${!selectedSize ? 'pd__add-btn--disabled' : ''} ${added ? 'pd__add-btn--added' : ''}`}
             onClick={handleAddToCart}
             disabled={!selectedSize || !product.inStock}
           >

@@ -23,6 +23,7 @@ export interface Product {
   isNew?: boolean;
   isBestseller?: boolean;
   isRestocked?: boolean;
+  features?: string[];
 }
 
 export interface CartItem {
@@ -33,6 +34,76 @@ export interface CartItem {
 }
 
 export type Category = 'caps' | 'tees' | 'jeans' | 'hoodies' | 'accessories';
+
+/* ─── Category Features ─── */
+export const categoryFeatures: Record<string, string[]> = {
+  caps: ['100% Cotton', 'Adjustable Strap', 'One Size Fits Most', 'Garment Dyed'],
+  tees: ['100% Organic Cotton', 'Heavyweight 280gsm', 'Boxy Relaxed Fit', 'Screen Printed'],
+  jeans: ['100% Cotton Denim', 'Selvedge Construction', 'Chain-Stitched Hem', 'Copper Rivets'],
+  hoodies: ['100% Cotton Fleece', 'Heavyweight 450gsm', 'Oversized Fit', 'Double-Layered Hood'],
+  accessories: ['Premium Materials', 'Handcrafted Details', 'Tarnish Resistant'],
+};
+
+/* ─── Size Guide Measurements (cm) ─── */
+export interface MeasurementRow {
+  size: string;
+  chest?: string;
+  length?: string;
+  sleeve?: string;
+  waist?: string;
+  inseam?: string;
+  brim?: string;
+  circumference?: string;
+}
+
+export const categoryMeasurements: Record<string, { headers: string[]; rows: MeasurementRow[] }> = {
+  caps: {
+    headers: ['Size', 'Circumference', 'Brim'],
+    rows: [
+      { size: 'S/M', circumference: '54–57', brim: '7' },
+      { size: 'L/XL', circumference: '58–61', brim: '7' },
+      { size: 'One Size', circumference: '55–60', brim: '7' },
+    ],
+  },
+  tees: {
+    headers: ['Size', 'Chest', 'Length', 'Sleeve'],
+    rows: [
+      { size: 'XS', chest: '49', length: '67', sleeve: '21' },
+      { size: 'S', chest: '52', length: '69', sleeve: '22' },
+      { size: 'M', chest: '55', length: '71', sleeve: '23' },
+      { size: 'L', chest: '58', length: '73', sleeve: '24' },
+      { size: 'XL', chest: '62', length: '75', sleeve: '25' },
+      { size: 'XXL', chest: '66', length: '77', sleeve: '26' },
+    ],
+  },
+  jeans: {
+    headers: ['Size', 'Waist', 'Inseam', 'Length'],
+    rows: [
+      { size: '28', waist: '72', inseam: '81', length: '105' },
+      { size: '30', waist: '76', inseam: '81', length: '106' },
+      { size: '32', waist: '81', inseam: '82', length: '107' },
+      { size: '34', waist: '86', inseam: '82', length: '108' },
+      { size: '36', waist: '91', inseam: '83', length: '109' },
+    ],
+  },
+  hoodies: {
+    headers: ['Size', 'Chest', 'Length', 'Sleeve'],
+    rows: [
+      { size: 'S', chest: '58', length: '68', sleeve: '62' },
+      { size: 'M', chest: '62', length: '70', sleeve: '64' },
+      { size: 'L', chest: '66', length: '72', sleeve: '66' },
+      { size: 'XL', chest: '70', length: '74', sleeve: '68' },
+    ],
+  },
+  accessories: {
+    headers: ['Size'],
+    rows: [{ size: 'One Size' }],
+  },
+};
+
+export const formatPrice = (price: number): string => {
+  return `€${price}`;
+};
 
 
 
@@ -711,10 +782,6 @@ export const categoryPrices: Record<string, number> = {
   tees: 64,
   jeans: 128,
   hoodies: 256,
-};
-
-export const formatPrice = (price: number): string => {
-  return `€${price}`;
 };
 
 /* ─── Search ─── */
