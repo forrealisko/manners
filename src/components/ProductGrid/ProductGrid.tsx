@@ -100,12 +100,11 @@ export default function ProductGrid() {
 
   /* ─── Ambient Audio ─── */
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audioReady, setAudioReady] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const maxVolume = 0.35; // Gallery ambiance — never full blast
+  const [isPlaying, setIsPlaying] = useState(false);
+  const maxVolume = 0.35;
 
-  // Create persistent audio element (survives re-renders)
+  // Create audio element once
   useEffect(() => {
     if (!audioRef.current) {
       const audio = new Audio('/media/ambient.mp3');
@@ -113,38 +112,32 @@ export default function ProductGrid() {
       audio.volume = maxVolume;
       audio.preload = 'auto';
       audioRef.current = audio;
-      audio.addEventListener('canplaythrough', () => setAudioReady(true), { once: true });
     }
-    return () => {
-      // Don't destroy on unmount — keep playing
-    };
   }, []);
 
-  // Start playback on first user interaction (browser autoplay policy)
+  // Try to start audio on any user tap/click (mobile requires direct gesture)
   useEffect(() => {
-    if (!audioReady) return;
-
-    const startAudio = () => {
+    const tryPlay = () => {
       const audio = audioRef.current;
-      if (audio && audio.paused) {
-        audio.play().catch(() => {});
-        setHasInteracted(true);
-      }
+      if (!audio || isPlaying) return;
+      audio.play().then(() => {
+        setIsPlaying(true);
+        // Remove listeners once playing
+        window.removeEventListener('click', tryPlay);
+        window.removeEventListener('touchstart', tryPlay);
+      }).catch(() => {
+        // Browser blocked it — will retry on next tap
+      });
     };
 
-    // Listen for any interaction
-    const events = ['click', 'touchstart', 'scroll'];
-    events.forEach((e) => window.addEventListener(e, startAudio, { once: true, passive: true }));
-
-    // Also listen on the grid container for scroll
-    const grid = document.getElementById('product-grid');
-    if (grid) grid.addEventListener('scroll', startAudio, { once: true, passive: true });
+    window.addEventListener('click', tryPlay, { passive: true });
+    window.addEventListener('touchstart', tryPlay, { passive: true });
 
     return () => {
-      events.forEach((e) => window.removeEventListener(e, startAudio));
-      if (grid) grid.removeEventListener('scroll', startAudio);
+      window.removeEventListener('click', tryPlay);
+      window.removeEventListener('touchstart', tryPlay);
     };
-  }, [audioReady]);
+  }, [isPlaying]);
 
   // Scroll-based volume: fade out as user scrolls away from hero
   useEffect(() => {
@@ -246,7 +239,7 @@ export default function ProductGrid() {
               preload="auto"
             />
             {/* Audio control — appears after first interaction */}
-            {hasInteracted && (
+            {isPlaying && (
               <button
                 className={`hero-banner__audio-toggle ${isMuted ? 'hero-banner__audio-toggle--muted' : ''}`}
                 onClick={toggleMute}
