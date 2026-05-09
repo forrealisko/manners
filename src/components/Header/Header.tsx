@@ -15,7 +15,7 @@ import Checkout from '../Checkout/Checkout';
 import './Header.css';
 
 export default function Header() {
-  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch } = useAppStore();
+  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch, setActiveFilter } = useAppStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
