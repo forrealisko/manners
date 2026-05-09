@@ -154,13 +154,19 @@ export default function ProductGrid() {
         {showBanner && (
           <div className="hero-banner">
             <video
+              ref={(el) => {
+                if (el) {
+                  el.defaultMuted = true;
+                  el.muted = true;
+                  el.play().catch(() => {});
+                }
+              }}
               src="/media/hero.mp4"
               className="hero-banner__video"
               autoPlay
               muted
               loop
               playsInline
-              preload="auto"
             />
           </div>
         )}
