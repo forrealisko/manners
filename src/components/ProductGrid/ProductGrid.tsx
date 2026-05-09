@@ -153,10 +153,14 @@ export default function ProductGrid() {
         {/* Hero banner — only on "All" view */}
         {showBanner && (
           <div className="hero-banner">
-            <img
-              src="/images/banner.webp"
-              alt="manners SS26 Collection"
-              className="hero-banner__image"
+            <video
+              src="/media/hero.mp4"
+              className="hero-banner__video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
             />
           </div>
         )}

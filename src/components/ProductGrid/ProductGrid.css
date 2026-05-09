@@ -29,7 +29,7 @@
   scroll-snap-stop: always;
 }
 
-.hero-banner__image {
+.hero-banner__video {
   width: 100%;
   height: 100%;
   object-fit: cover;
