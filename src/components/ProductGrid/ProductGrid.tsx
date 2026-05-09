@@ -98,82 +98,6 @@ export default function ProductGrid() {
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerVisible, setFooterVisible] = useState(false);
 
-  /* ─── Ambient Audio ─── */
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const maxVolume = 0.35;
-
-  // Create audio element once
-  useEffect(() => {
-    if (!audioRef.current) {
-      const audio = new Audio('/media/ambient.mp3');
-      audio.loop = true;
-      audio.volume = maxVolume;
-      audio.preload = 'auto';
-      audioRef.current = audio;
-    }
-  }, []);
-
-  // Try to start audio on any user tap/click (mobile requires direct gesture)
-  useEffect(() => {
-    const tryPlay = () => {
-      const audio = audioRef.current;
-      if (!audio || isPlaying) return;
-      audio.play().then(() => {
-        setIsPlaying(true);
-        // Remove listeners once playing
-        window.removeEventListener('click', tryPlay);
-        window.removeEventListener('touchstart', tryPlay);
-      }).catch(() => {
-        // Browser blocked it — will retry on next tap
-      });
-    };
-
-    window.addEventListener('click', tryPlay, { passive: true });
-    window.addEventListener('touchstart', tryPlay, { passive: true });
-
-    return () => {
-      window.removeEventListener('click', tryPlay);
-      window.removeEventListener('touchstart', tryPlay);
-    };
-  }, [isPlaying]);
-
-  // Scroll-based volume: fade out as user scrolls away from hero
-  useEffect(() => {
-    const grid = document.getElementById('product-grid');
-    if (!grid || !audioRef.current) return;
-
-    const handleScroll = () => {
-      const audio = audioRef.current;
-      if (!audio || isMuted) return;
-
-      const scrollTop = grid.scrollTop;
-      const heroHeight = grid.querySelector('.hero-banner')?.clientHeight || window.innerHeight * 0.45;
-      // Full volume when at top, fades to 0 over ~2 hero heights
-      const fadeDistance = heroHeight * 2.5;
-      const factor = Math.max(0, 1 - scrollTop / fadeDistance);
-      audio.volume = maxVolume * factor * factor; // Quadratic easing for smoother fade
-    };
-
-    grid.addEventListener('scroll', handleScroll, { passive: true });
-    return () => grid.removeEventListener('scroll', handleScroll);
-  }, [isMuted]);
-
-  // Mute toggle
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isMuted) {
-      audio.volume = maxVolume;
-      audio.muted = false;
-      setIsMuted(false);
-    } else {
-      audio.muted = true;
-      setIsMuted(true);
-    }
-  };
-
   const displayProducts = useMemo((): Product[] => {
     if (activeFilter === 'all') {
       const cap = products.find((p) => p.category === 'caps');
@@ -226,40 +150,14 @@ export default function ProductGrid() {
   return (
     <section className="product-grid-section" id="product-grid-section">
       <div className="snap-scroll-container" id="product-grid">
-        {/* Hero Video Banner — only on "All" view */}
+        {/* Hero banner — only on "All" view */}
         {showBanner && (
           <div className="hero-banner">
-            <video
-              src="/media/hero.mp4"
-              className="hero-banner__video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
+            <img
+              src="/images/banner.webp"
+              alt="manners SS26 Collection"
+              className="hero-banner__image"
             />
-            {/* Audio control — appears after first interaction */}
-            {isPlaying && (
-              <button
-                className={`hero-banner__audio-toggle ${isMuted ? 'hero-banner__audio-toggle--muted' : ''}`}
-                onClick={toggleMute}
-                aria-label={isMuted ? 'Unmute ambient audio' : 'Mute ambient audio'}
-              >
-                {isMuted ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <line x1="23" y1="9" x2="17" y2="15" />
-                    <line x1="17" y1="9" x2="23" y2="15" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <path d="M15.54 8.46a5 5 0 010 7.07" />
-                    <path d="M19.07 4.93a10 10 0 010 14.14" />
-                  </svg>
-                )}
-              </button>
-            )}
           </div>
         )}
 
@@ -307,4 +205,3 @@ export default function ProductGrid() {
     </section>
   );
 }
-
