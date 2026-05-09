@@ -4,14 +4,99 @@
    "All" view has a hero banner + discovery footer.
    ═══════════════════════════════════════════════════════ */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../stores/appStore';
 import { products, type Product, type Category } from '../../data/products';
 import ProductCard from './ProductCard';
 import './ProductGrid.css';
 
+/* ─── Category icons (inline SVG for crisp rendering) ─── */
+const CategoryIcon = ({ cat }: { cat: string }) => {
+  const size = 20;
+  const style = { strokeWidth: 1.5, fill: 'none', stroke: 'currentColor' };
+
+  switch (cat) {
+    case 'caps':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" {...style}>
+          <path d="M4 16c0-4 3.5-8 8-8s8 4 8 8" strokeLinecap="round" />
+          <path d="M2 16h20" strokeLinecap="round" />
+          <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'tees':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" {...style}>
+          <path d="M6 4l-4 4 3 1 1 11h12l1-11 3-1-4-4" strokeLinejoin="round" strokeLinecap="round" />
+          <path d="M9 4a3 3 0 006 0" strokeLinecap="round" />
+        </svg>
+      );
+    case 'jeans':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" {...style}>
+          <path d="M6 2h12v6l-2 14H14l-2-8-2 8H8L6 8V2z" strokeLinejoin="round" strokeLinecap="round" />
+        </svg>
+      );
+    case 'hoodies':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" {...style}>
+          <path d="M5 8l-3 4 3 1v7h14v-7l3-1-3-4" strokeLinejoin="round" strokeLinecap="round" />
+          <path d="M9 4a3 3 0 016 0" strokeLinecap="round" />
+          <path d="M5 8c0-2 2.5-4 7-4s7 2 7 4" strokeLinecap="round" />
+          <path d="M10 13v3h4v-3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'accessories':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" {...style}>
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v4M12 18v4M2 12h4M18 12h4" strokeLinecap="round" />
+          <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+};
+
+/* ─── Typewriter Effect ─── */
+function TypewriterTitle({ text, trigger }: { text: string; trigger: boolean }) {
+  const [displayed, setDisplayed] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    if (!trigger) {
+      setDisplayed('');
+      return;
+    }
+
+    let i = 0;
+    setDisplayed('');
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(interval);
+        // Blink cursor a few times then hide
+        setTimeout(() => setShowCursor(false), 1500);
+      }
+    }, 55);
+
+    return () => clearInterval(interval);
+  }, [trigger, text]);
+
+  return (
+    <h2 className="discovery-footer__title">
+      {displayed}
+      <span className={`discovery-footer__cursor ${showCursor && trigger ? 'discovery-footer__cursor--blink' : 'discovery-footer__cursor--hidden'}`}>|</span>
+    </h2>
+  );
+}
+
 export default function ProductGrid() {
   const { activeFilter, setActiveFilter } = useAppStore();
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [footerVisible, setFooterVisible] = useState(false);
 
   const displayProducts = useMemo((): Product[] => {
     if (activeFilter === 'all') {
@@ -35,9 +120,29 @@ export default function ProductGrid() {
 
   const showBanner = activeFilter === 'all';
 
+  // Observe footer visibility for typewriter trigger
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setFooterVisible(true);
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Reset typewriter when filter changes
+  useEffect(() => {
+    setFooterVisible(false);
+  }, [activeFilter]);
+
   const handleCategoryNav = (cat: string) => {
     setActiveFilter(cat as Category);
-    // Scroll back to top
     const container = document.getElementById('product-grid');
     if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -70,17 +175,17 @@ export default function ProductGrid() {
         ))}
 
         {/* ─── Discovery Footer ─── */}
-        <div className="discovery-footer">
+        <div className="discovery-footer" ref={footerRef}>
           <div className="discovery-footer__content">
-            <h2 className="discovery-footer__title">What are you looking for?</h2>
+            <TypewriterTitle text="What are you looking for?" trigger={footerVisible} />
             <div className="discovery-footer__line" />
             <nav className="discovery-footer__nav">
               {[
-                { key: 'caps', label: 'Caps', price: '€32' },
-                { key: 'tees', label: 'Tees', price: '€64' },
-                { key: 'jeans', label: 'Jeans', price: '€128' },
-                { key: 'hoodies', label: 'Hoodies', price: '€256' },
-                { key: 'accessories', label: 'Accessories', price: 'from €28' },
+                { key: 'caps', label: 'Cap' },
+                { key: 'tees', label: 'Tee' },
+                { key: 'jeans', label: 'Jeans' },
+                { key: 'hoodies', label: 'Hoodie' },
+                { key: 'accessories', label: 'Accessories' },
               ].map((cat) => (
                 <button
                   key={cat.key}
@@ -88,7 +193,9 @@ export default function ProductGrid() {
                   onClick={() => handleCategoryNav(cat.key)}
                 >
                   <span className="discovery-footer__item-label">{cat.label}</span>
-                  <span className="discovery-footer__item-price">{cat.price}</span>
+                  <span className="discovery-footer__item-icon">
+                    <CategoryIcon cat={cat.key} />
+                  </span>
                 </button>
               ))}
             </nav>

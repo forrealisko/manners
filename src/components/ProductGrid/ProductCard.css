@@ -140,9 +140,10 @@
 
 .product-card__name {
   font-family: var(--font-primary);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: var(--weight-regular);
   color: var(--color-text-secondary);
+  opacity: 0.8;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   line-height: var(--leading-tight);

@@ -45,10 +45,19 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Center: Brand */}
-          <div className="header__brand" id="brand-logo">
+          {/* Center: Brand — reset + scroll to top */}
+          <button
+            className="header__brand"
+            id="brand-logo"
+            onClick={() => {
+              setActiveFilter('all');
+              const grid = document.getElementById('product-grid');
+              if (grid) grid.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            aria-label="Home"
+          >
             <span className="header__brand-text">m a n n e r s</span>
-          </div>
+          </button>
 
           {/* Right: Cart + Menu */}
           <div className="header__right">
