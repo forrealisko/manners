@@ -181,15 +181,51 @@
   min-height: 2em;
 }
 
-/* Typewriter cursor */
+/* ─── Voices ───
+   Each phrasing gets its own typeface so the change carries meaning
+   rather than reading as decoration. The swap happens while the line
+   is empty, so it is never seen mid-word. */
+.discovery-footer__title--plain {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-light);
+  letter-spacing: var(--tracking-tight);
+}
+
+.discovery-footer__title--loud {
+  font-family: var(--font-brand);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 1.35rem;
+}
+
+.discovery-footer__title--soft {
+  font-family: var(--font-handwritten);
+  font-weight: 500;
+  letter-spacing: 0;
+  font-size: 2.1rem;
+}
+
+/* Cursor */
 .discovery-footer__cursor {
   font-weight: var(--weight-light);
   color: var(--color-accent);
   margin-left: 1px;
 }
 
+/* Solid while writing — a cursor that blinks mid-word reads as a machine */
+.discovery-footer__cursor--solid {
+  opacity: 1;
+  animation: none;
+}
+
 .discovery-footer__cursor--blink {
   animation: cursorBlink 0.6s ease infinite;
+}
+
+/* Settled: a slower, calmer pulse */
+.discovery-footer__cursor--slow {
+  animation: cursorBlink 1.6s ease infinite;
 }
 
 .discovery-footer__cursor--hidden {

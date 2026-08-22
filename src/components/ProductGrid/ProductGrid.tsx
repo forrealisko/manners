@@ -81,36 +81,152 @@ function useColumns(): number {
   return cols;
 }
 
-/* ─── Typewriter Effect ─── */
-function TypewriterTitle({ text, trigger }: { text: string; trigger: boolean }) {
+/* ═══════════════════════════════════════════════════════
+   Discovery title
+
+   A plain typewriter reads as a machine: constant speed, no
+   intent. This one varies its cadence — a beat at word breaks,
+   a longer one after punctuation, jitter in between — and
+   cycles three phrasings of the same question, each in its own
+   voice. It performs the cycle once, then settles back on the
+   opening question and rests.
+   ═══════════════════════════════════════════════════════ */
+
+type Voice = 'plain' | 'loud' | 'soft';
+type Phase = 'idle' | 'typing' | 'holding' | 'erasing' | 'done';
+
+interface Phrase {
+  text: string;
+  voice: Voice;
+  /* A false start: type something, think better of it, delete it. */
+  rethink?: { at: number; wrong: string };
+  hold: number;
+}
+
+const PHRASES: Phrase[] = [
+  { text: 'What are you looking for?', voice: 'plain', hold: 2600 },
+  { text: 'Something loud?', voice: 'loud', rethink: { at: 10, wrong: 'qui' }, hold: 2000 },
+  { text: "Something you'll keep?", voice: 'soft', hold: 2400 },
+];
+
+/* Uneven by design — the unevenness is what stops it feeling mechanical. */
+function typeDelay(ch: string): number {
+  if (ch === ' ') return 95 + Math.random() * 70;      // a beat between words
+  if (/[?.!,]/.test(ch)) return 280 + Math.random() * 140; // punctuation lands
+  if (/['’]/.test(ch)) return 60 + Math.random() * 40;
+  return 32 + Math.random() * 50;
+}
+
+function DiscoveryTitle({ trigger }: { trigger: boolean }) {
   const [displayed, setDisplayed] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
+  const [voice, setVoice] = useState<Voice>(PHRASES[0].voice);
+  const [phase, setPhase] = useState<Phase>('idle');
 
   useEffect(() => {
     if (!trigger) {
       setDisplayed('');
+      setPhase('idle');
       return;
     }
 
-    let i = 0;
-    setDisplayed('');
-    const interval = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(interval);
-        // Blink cursor a few times then hide
-        setTimeout(() => setShowCursor(false), 1500);
-      }
-    }, 55);
+    /* Respect a reduced-motion preference: show the question, skip the show. */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setVoice(PHRASES[0].voice);
+      setDisplayed(PHRASES[0].text);
+      setPhase('done');
+      return;
+    }
 
-    return () => clearInterval(interval);
-  }, [trigger, text]);
+    let cancelled = false;
+    const timers: number[] = [];
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => {
+        timers.push(window.setTimeout(resolve, ms));
+      });
+
+    const run = async () => {
+      /* Run the cycle, then return to the opening question and stop there —
+         the resting state should be the real question above the categories. */
+      const sequence = [...PHRASES, PHRASES[0]];
+
+      for (let s = 0; s < sequence.length; s++) {
+        const phrase = sequence[s];
+        const isLast = s === sequence.length - 1;
+
+        if (cancelled) return;
+        setVoice(phrase.voice);
+        setPhase('typing');
+
+        let shown = '';
+        for (let i = 0; i < phrase.text.length; i++) {
+          if (phrase.rethink && i === phrase.rethink.at) {
+            for (const ch of phrase.rethink.wrong) {
+              if (cancelled) return;
+              shown += ch;
+              setDisplayed(shown);
+              await wait(typeDelay(ch));
+            }
+            await wait(520);                       // the pause where it reconsiders
+            setPhase('erasing');
+            for (let k = 0; k < phrase.rethink.wrong.length; k++) {
+              if (cancelled) return;
+              shown = shown.slice(0, -1);
+              setDisplayed(shown);
+              await wait(34);
+            }
+            setPhase('typing');
+            await wait(180);
+          }
+
+          if (cancelled) return;
+          shown += phrase.text[i];
+          setDisplayed(shown);
+          await wait(typeDelay(phrase.text[i]));
+        }
+
+        if (cancelled) return;
+        if (isLast) {
+          setPhase('done');
+          return;
+        }
+
+        setPhase('holding');
+        await wait(phrase.hold);
+
+        if (cancelled) return;
+        setPhase('erasing');
+        while (shown.length) {
+          if (cancelled) return;
+          shown = shown.slice(0, -1);
+          setDisplayed(shown);
+          await wait(22);
+        }
+        await wait(260);
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [trigger]);
+
+  /* Solid while it is actively writing, blinking only while it waits. */
+  const cursorState =
+    phase === 'typing' || phase === 'erasing'
+      ? 'discovery-footer__cursor--solid'
+      : phase === 'done'
+      ? 'discovery-footer__cursor--slow'
+      : phase === 'idle'
+      ? 'discovery-footer__cursor--hidden'
+      : 'discovery-footer__cursor--blink';
 
   return (
-    <h2 className="discovery-footer__title">
+    <h2 className={`discovery-footer__title discovery-footer__title--${voice}`}>
       {displayed}
-      <span className={`discovery-footer__cursor ${showCursor && trigger ? 'discovery-footer__cursor--blink' : 'discovery-footer__cursor--hidden'}`}>|</span>
+      <span className={`discovery-footer__cursor ${cursorState}`}>|</span>
     </h2>
   );
 }
@@ -244,7 +360,7 @@ export default function ProductGrid() {
         {/* ─── Discovery Footer ─── */}
         <div className="discovery-footer" ref={footerRef}>
           <div className="discovery-footer__content">
-            <TypewriterTitle text="What are you looking for?" trigger={footerVisible} />
+            <DiscoveryTitle trigger={footerVisible} />
             <div className="discovery-footer__line" />
             <nav className="discovery-footer__nav">
               {[
