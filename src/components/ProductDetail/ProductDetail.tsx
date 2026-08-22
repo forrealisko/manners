@@ -3,7 +3,7 @@
    Hero image → scrolling gallery → features → measurements → size → add to bag
    ═══════════════════════════════════════════════════════ */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { ArrowLeft, Minus, Plus, ShoppingBag, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -35,6 +35,27 @@ export default function ProductDetail() {
     [product]
   );
 
+  /* Opening pushes a history entry so browser back / edge-swipe closes the
+     product instead of leaving the site. The grid stays mounted underneath,
+     so closing lands exactly where the user left off. */
+  const pushedRef = useRef(false);
+  useEffect(() => {
+    if (!selectedProductId) return;
+    // Guarded: StrictMode invokes effects twice in dev, and two pushes would
+    // need two backs to escape.
+    if (!pushedRef.current) {
+      window.history.pushState({ mannersProduct: selectedProductId }, '');
+      pushedRef.current = true;
+    }
+
+    const onPop = () => {
+      pushedRef.current = false;
+      setSelectedProduct(null);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [selectedProductId, setSelectedProduct]);
+
   if (!product) return null;
 
   const showPlaceholder = imageError || !product.images[0];
@@ -50,12 +71,12 @@ export default function ProductDetail() {
   };
 
   const handleClose = () => {
-    setSelectedProduct(null);
-    setSelectedSize(null);
-    setSelectedColor(null);
-    setQuantity(1);
-    setAdded(false);
-    setShowMeasurements(false);
+    if (pushedRef.current) {
+      pushedRef.current = false;
+      window.history.back();   // popstate handler clears the selection
+    } else {
+      setSelectedProduct(null);
+    }
   };
 
   // Get measurement value by key
@@ -69,13 +90,17 @@ export default function ProductDetail() {
       <div className="pd__backdrop" onClick={handleClose} />
 
       <div className="pd__panel">
+        {/* Back — floats over the media column, always reachable */}
+        <button className="pd__close" onClick={handleClose} aria-label="Go back">
+          <ArrowLeft size={22} strokeWidth={1.5} />
+        </button>
+
         {/* ─── Scrollable Content ─── */}
         <div className="pd__scroll">
+          <div className="pd__layout">
 
-          {/* Close / Back */}
-          <button className="pd__close" onClick={handleClose} aria-label="Go back">
-            <ArrowLeft size={22} strokeWidth={1.5} />
-          </button>
+            {/* ═══ Media column ═══ */}
+            <div className="pd__media">
 
           {/* ─── Hero Image (will be 3D later) ─── */}
           <div className="pd__hero" style={gradient}>
@@ -107,6 +132,11 @@ export default function ProductDetail() {
               ))}
             </div>
           )}
+
+            </div>{/* /pd__media */}
+
+            {/* ═══ Info column ═══ */}
+            <div className="pd__aside">
 
           {/* ─── Product Info ─── */}
           <div className="pd__info">
@@ -232,12 +262,8 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Bottom spacer for sticky button */}
-          <div style={{ height: 80 }} />
-        </div>
-
-        {/* ─── Sticky Add to Bag ─── */}
-        <div className="pd__sticky-bar">
+          {/* ─── Add to Bag — sticks to the bottom of the info column ─── */}
+          <div className="pd__sticky-bar">
           <button
             className={`pd__add-btn ${!selectedSize ? 'pd__add-btn--disabled' : ''} ${added ? 'pd__add-btn--added' : ''}`}
             onClick={handleAddToCart}
@@ -252,7 +278,11 @@ export default function ProductDetail() {
               ? `Add to Bag — ${formatPrice(product.price * quantity)}`
               : 'Select a Size'}
           </button>
-        </div>
+          </div>
+
+            </div>{/* /pd__aside */}
+          </div>{/* /pd__layout */}
+        </div>{/* /pd__scroll */}
       </div>
     </div>
   );

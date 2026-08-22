@@ -35,8 +35,8 @@
 }
 
 @keyframes pdSlideIn {
-  from { transform: translateX(30px); opacity: 0.8; }
-  to { transform: translateX(0); opacity: 1; }
+  from { transform: scale(0.985) translateY(8px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 /* ─── Scrollable Content ─── */
@@ -54,12 +54,12 @@
 
 /* ─── Close Button ─── */
 .pd__close {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 20;
   width: 44px;
   height: 44px;
-  margin: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,7 +79,6 @@
 .pd__hero {
   width: 100%;
   aspect-ratio: 3 / 4;
-  margin-top: -52px; /* Overlap the close button */
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -88,6 +87,24 @@
     radial-gradient(ellipse at 30% 20%, hsla(var(--prod-hue), var(--prod-sat), 35%, 0.5), transparent 60%),
     radial-gradient(ellipse at 70% 80%, hsla(var(--prod-hue), var(--prod-sat), 25%, 0.4), transparent 50%),
     linear-gradient(135deg, hsla(var(--prod-hue), var(--prod-sat), 12%, 1), hsla(var(--prod-hue), var(--prod-sat), 8%, 1));
+}
+
+/* The hero fills half the page now, so it has to follow the theme rather
+   than staying a dark slab next to a light info column. */
+[data-theme="light"] .pd__hero {
+  background:
+    radial-gradient(ellipse at 30% 20%, hsla(var(--prod-hue), var(--prod-sat), 72%, 0.45), transparent 60%),
+    radial-gradient(ellipse at 70% 80%, hsla(var(--prod-hue), var(--prod-sat), 64%, 0.35), transparent 50%),
+    linear-gradient(135deg, hsla(var(--prod-hue), var(--prod-sat), 95%, 1), hsla(var(--prod-hue), var(--prod-sat), 88%, 1));
+}
+
+[data-theme="light"] .pd__close {
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .pd__close:hover {
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .pd__hero-image {
@@ -486,11 +503,84 @@
   color: #fff;
 }
 
-/* ─── Desktop ─── */
-@media (min-width: 768px) {
-  .pd__panel {
-    max-width: 500px;
-    margin-left: auto;
+/* ═══════════════════════════════════════════════════════
+   Desktop — full page, media left, details right.
+   The media column scrolls; the info column stays put so the
+   size picker and Add to Bag never scroll out of reach.
+   ═══════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  .pd__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 440px;
+    align-items: start;
+  }
+
+  .pd__media {
+    padding: 0;
+  }
+
+  .pd__hero {
+    aspect-ratio: 4 / 5;
+  }
+
+  .pd__gallery {
+    gap: 8px;
+    padding: 8px 0 0;
+  }
+
+  .pd__aside {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-top: 56px;
     border-left: 1px solid rgba(255, 255, 255, 0.06);
+    scrollbar-width: none;
+  }
+
+  .pd__aside::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-theme="light"] .pd__aside {
+    border-left-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .pd__info {
+    padding: 8px 28px 0;
+  }
+
+  .pd__name {
+    font-size: var(--text-2xl);
+  }
+
+  .pd__price {
+    font-size: var(--text-xl);
+  }
+
+  .pd__features,
+  .pd__section {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .pd__measurements {
+    margin: 0 28px;
+  }
+
+  /* Push the CTA to the bottom of the column when the content is short */
+  .pd__sticky-bar {
+    margin-top: auto;
+    padding: 16px 28px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Wider screens: let the media breathe rather than stretching the text column */
+@media (min-width: 1600px) {
+  .pd__layout {
+    grid-template-columns: minmax(0, 1fr) 520px;
   }
 }
