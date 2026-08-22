@@ -62,6 +62,9 @@ const CategoryIcon = ({ cat }: { cat: string }) => {
 /* ─── Responsive column count: 4 across on desktop, 2 on mobile/tablet ─── */
 const DESKTOP_QUERY = '(min-width: 1024px)';
 
+/* Products shown on the "all" view — two full rows on desktop */
+const HOME_PRODUCT_COUNT = 8;
+
 function useColumns(): number {
   const [cols, setCols] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches ? 4 : 2
@@ -119,14 +122,42 @@ export default function ProductGrid() {
   const [footerVisible, setFooterVisible] = useState(false);
 
   const displayProducts = useMemo((): Product[] => {
-    if (activeFilter === 'all') {
-      const cap = products.find((p) => p.category === 'caps');
-      const tee = products.find((p) => p.category === 'tees');
-      const jeans = products.find((p) => p.category === 'jeans');
-      const jeans2 = products.find((p) => p.category === 'jeans' && p.id !== jeans?.id);
-      return [cap, tee, jeans, jeans2].filter(Boolean) as Product[];
+    if (activeFilter !== 'all') {
+      return products.filter((p) => p.category === (activeFilter as Category));
     }
-    return products.filter((p) => p.category === (activeFilter as Category));
+
+    /* Only products with real photography. Most of the catalog is still
+       placeholder entries with no image, which would render as empty cards. */
+    const shot = products.filter((p) => p.images.length > 0);
+
+    /* The opening four, unchanged. */
+    const cap = shot.find((p) => p.category === 'caps');
+    const tee = shot.find((p) => p.category === 'tees');
+    const jeans = shot.find((p) => p.category === 'jeans');
+    const jeans2 = shot.find((p) => p.category === 'jeans' && p.id !== jeans?.id);
+    const opening = [cap, tee, jeans, jeans2].filter(Boolean) as Product[];
+
+    /* Fill the remaining slots round-robin across categories, so the second
+       row is a mix rather than four caps in a line. */
+    const remaining = new Map<Category, Product[]>();
+    for (const product of shot) {
+      if (opening.some((o) => o.id === product.id)) continue;
+      remaining.set(product.category, [...(remaining.get(product.category) ?? []), product]);
+    }
+
+    const picked = [...opening];
+    let progressed = true;
+    while (progressed && picked.length < HOME_PRODUCT_COUNT) {
+      progressed = false;
+      for (const list of remaining.values()) {
+        const next = list.shift();
+        if (!next) continue;
+        picked.push(next);
+        progressed = true;
+        if (picked.length === HOME_PRODUCT_COUNT) break;
+      }
+    }
+    return picked;
   }, [activeFilter]);
 
   // Group into rows of `columns`

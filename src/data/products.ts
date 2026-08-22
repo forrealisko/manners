@@ -273,7 +273,7 @@ export const products: Product[] = [
     category: 'tees',
     price: 64,
     currency: 'EUR',
-    images: ['/images/tees/tee-03.jpg'],
+    images: [],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Sky', hex: '#a3c4d9' },
@@ -289,7 +289,7 @@ export const products: Product[] = [
     category: 'tees',
     price: 64,
     currency: 'EUR',
-    images: ['/images/tees/tee-04.jpg'],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Dusty Rose', hex: '#c4a4a0' },
@@ -306,7 +306,7 @@ export const products: Product[] = [
     category: 'tees',
     price: 64,
     currency: 'EUR',
-    images: ['/images/tees/tee-05.jpg'],
+    images: [],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
       { name: 'White', hex: '#fafafa' },
@@ -373,7 +373,7 @@ export const products: Product[] = [
     category: 'jeans',
     price: 128,
     currency: 'EUR',
-    images: ['/images/jeans/jeans-04.jpg'],
+    images: [],
     sizes: ['28', '30', '32', '34', '36'],
     colors: [
       { name: 'Dark Rinse', hex: '#1a2540' },
@@ -390,7 +390,7 @@ export const products: Product[] = [
     category: 'jeans',
     price: 128,
     currency: 'EUR',
-    images: ['/images/jeans/jeans-05.jpg'],
+    images: [],
     sizes: ['28', '30', '32', '34', '36'],
     colors: [
       { name: 'Splatter', hex: '#4a6c8c' },
@@ -407,7 +407,7 @@ export const products: Product[] = [
     category: 'hoodies',
     price: 256,
     currency: 'EUR',
-    images: ['/images/hoodies/hoodie-01.jpg'],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Black', hex: '#111111' },
@@ -424,7 +424,7 @@ export const products: Product[] = [
     category: 'hoodies',
     price: 256,
     currency: 'EUR',
-    images: ['/images/hoodies/hoodie-02.jpg'],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Washed Navy', hex: '#3a4a5c' },
@@ -440,7 +440,7 @@ export const products: Product[] = [
     category: 'hoodies',
     price: 256,
     currency: 'EUR',
-    images: ['/images/hoodies/hoodie-03.jpg'],
+    images: [],
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
       { name: 'Mocha', hex: '#5a4a3a' },
@@ -456,7 +456,7 @@ export const products: Product[] = [
     category: 'hoodies',
     price: 256,
     currency: 'EUR',
-    images: ['/images/hoodies/hoodie-04.jpg'],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Plum', hex: '#4a3d5c' },
@@ -473,7 +473,7 @@ export const products: Product[] = [
     category: 'hoodies',
     price: 256,
     currency: 'EUR',
-    images: ['/images/hoodies/hoodie-05.jpg'],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Forest', hex: '#3d5a4a' },
@@ -491,7 +491,7 @@ export const products: Product[] = [
     category: 'accessories',
     price: 85,
     currency: 'EUR',
-    images: ['/images/accessories/acc-01.jpg'],
+    images: [],
     sizes: ['One Size'],
     colors: [
       { name: 'Silver', hex: '#c0c0c0' },
@@ -507,7 +507,7 @@ export const products: Product[] = [
     category: 'accessories',
     price: 62,
     currency: 'EUR',
-    images: ['/images/accessories/acc-02.jpg'],
+    images: [],
     sizes: ['One Size'],
     colors: [
       { name: 'Natural', hex: '#e8dcc8' },
@@ -524,7 +524,7 @@ export const products: Product[] = [
     category: 'accessories',
     price: 75,
     currency: 'EUR',
-    images: ['/images/accessories/acc-03.jpg'],
+    images: [],
     sizes: ['One Size'],
     colors: [
       { name: 'Camel', hex: '#c4a76c' },
@@ -540,7 +540,7 @@ export const products: Product[] = [
     category: 'accessories',
     price: 35,
     currency: 'EUR',
-    images: ['/images/accessories/acc-04.jpg'],
+    images: [],
     sizes: ['S/M', 'L/XL'],
     colors: [
       { name: 'Mixed', hex: '#888888' },
