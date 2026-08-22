@@ -120,12 +120,11 @@ function DotGrid() {
 }
 
 export default function App() {
-  const { isLoading, setLoading, selectedProductId, theme, initAutoTheme } = useAppStore();
+  const { isLoading, setLoading, selectedProductId, theme, initTheme } = useAppStore();
 
-  // Auto-detect theme from sunrise/sunset on mount
+  // Apply stored theme (or the OS preference) on mount — no location prompt
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    initAutoTheme();
+    initTheme();
   }, []);
 
   // Keep data-theme in sync when user toggles

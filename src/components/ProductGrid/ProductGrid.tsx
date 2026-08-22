@@ -59,6 +59,25 @@ const CategoryIcon = ({ cat }: { cat: string }) => {
   }
 };
 
+/* ─── Responsive column count: 4 across on desktop, 2 on mobile/tablet ─── */
+const DESKTOP_QUERY = '(min-width: 1024px)';
+
+function useColumns(): number {
+  const [cols, setCols] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches ? 4 : 2
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const sync = () => setCols(mq.matches ? 4 : 2);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  return cols;
+}
+
 /* ─── Typewriter Effect ─── */
 function TypewriterTitle({ text, trigger }: { text: string; trigger: boolean }) {
   const [displayed, setDisplayed] = useState('');
@@ -95,6 +114,7 @@ function TypewriterTitle({ text, trigger }: { text: string; trigger: boolean }) 
 
 export default function ProductGrid() {
   const { activeFilter, setActiveFilter } = useAppStore();
+  const columns = useColumns();
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerVisible, setFooterVisible] = useState(false);
 
@@ -109,14 +129,14 @@ export default function ProductGrid() {
     return products.filter((p) => p.category === (activeFilter as Category));
   }, [activeFilter]);
 
-  // Group into rows of 2
+  // Group into rows of `columns`
   const rows = useMemo(() => {
     const result: Product[][] = [];
-    for (let i = 0; i < displayProducts.length; i += 2) {
-      result.push(displayProducts.slice(i, i + 2));
+    for (let i = 0; i < displayProducts.length; i += columns) {
+      result.push(displayProducts.slice(i, i + columns));
     }
     return result;
-  }, [displayProducts]);
+  }, [displayProducts, columns]);
 
   const showBanner = activeFilter === 'all';
 
@@ -161,7 +181,7 @@ export default function ProductGrid() {
                   el.play().catch(() => {});
                 }
               }}
-              src="/media/hero.mp4"
+              src="/media/hero-loop.mp4"
               className="hero-banner__video"
               autoPlay
               muted
@@ -172,15 +192,21 @@ export default function ProductGrid() {
         )}
 
         {rows.map((row, rowIdx) => (
-          <div className="product-row" key={`row-${activeFilter}-${rowIdx}`}>
+          <div
+            className="product-row"
+            key={`row-${activeFilter}-${columns}-${rowIdx}`}
+            style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+          >
             {row.map((product, colIdx) => (
               <ProductCard
                 key={product.id}
                 product={product}
-                index={rowIdx * 2 + colIdx}
+                index={rowIdx * columns + colIdx}
               />
             ))}
-            {row.length < 2 && <div className="product-row__empty" />}
+            {Array.from({ length: columns - row.length }).map((_, i) => (
+              <div className="product-row__empty" key={`empty-${i}`} />
+            ))}
           </div>
         ))}
 

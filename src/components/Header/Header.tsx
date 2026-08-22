@@ -15,7 +15,7 @@ import Checkout from '../Checkout/Checkout';
 import './Header.css';
 
 export default function Header() {
-  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch, setActiveFilter } = useAppStore();
+  const { isMenuOpen, toggleMenu, isSearchOpen, toggleSearch, setActiveFilter, theme, toggleTheme } = useAppStore();
   const itemCount = useCartStore((s) => s.getItemCount());
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -42,6 +42,19 @@ export default function Header() {
               id="account-btn"
             >
               <User size={20} strokeWidth={1.5} />
+            </button>
+            <button
+              className="header__action header__theme-btn"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              id="theme-btn"
+            >
+              {theme === 'dark' ? (
+                <Sun size={20} strokeWidth={1.5} />
+              ) : (
+                <Moon size={20} strokeWidth={1.5} />
+              )}
             </button>
           </div>
 

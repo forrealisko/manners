@@ -87,6 +87,21 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+/* ─── Narrow phones: three icons on the left would collide with the
+       centred wordmark, so tighten the touch targets a little ─── */
+@media (max-width: 480px) {
+  .header__left,
+  .header__right {
+    gap: 0;
+    min-width: 0;
+  }
+
+  .header__action {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 /* ─── Cart Badge ─── */
 .header__cart-btn {
   position: relative;

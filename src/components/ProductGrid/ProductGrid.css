@@ -26,7 +26,6 @@
   margin-right: 6px;
 
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .hero-banner__video {
@@ -41,7 +40,9 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  scroll-snap-type: y mandatory;
+  /* Gentle magnet, not a cage — you can scroll past freely and it eases
+     into the nearest row only when you let go close to one. */
+  scroll-snap-type: y proximity;
   -webkit-overflow-scrolling: touch;
 
   /* Snap offset = header height + small breathing room */
@@ -73,7 +74,6 @@
 
   /* Snap each row */
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 /* First row: push below the fixed header (when no banner) */
@@ -95,9 +95,9 @@
   margin-bottom: 5px;
 }
 
-/* Last row: enough bottom space to snap fully */
+/* Last row: a little room so the final row can still settle */
 .product-row:last-child {
-  margin-bottom: 50vh;
+  margin-bottom: 12vh;
 }
 
 .product-row__empty {
@@ -119,12 +119,34 @@
   }
 }
 
-/* ─── Desktop ─── */
-@media (min-width: 1200px) {
+/* ─── Desktop — 4 products per row, free scrolling ─── */
+@media (min-width: 1024px) {
+  /* No snapping at all on desktop: a mouse wheel / trackpad should just scroll. */
+  .snap-scroll-container {
+    scroll-snap-type: none;
+  }
+
   .product-row {
-    max-width: 1000px;
+    /* grid-template-columns is set inline from the column count in JS */
+    max-width: 1500px;
     gap: 14px;
-    padding: 0 14px;
+    padding: 0 16px;
+  }
+
+  .product-row:last-child {
+    margin-bottom: 6vh;
+  }
+
+  .discovery-footer {
+    margin-bottom: 4vh;
+  }
+}
+
+@media (min-width: 1600px) {
+  .product-row {
+    max-width: 1760px;
+    gap: 18px;
+    padding: 0 20px;
   }
 }
 
@@ -136,8 +158,7 @@
   justify-content: center;
   padding: var(--space-12) var(--space-6);
   scroll-snap-align: start;
-  scroll-snap-stop: always;
-  margin-bottom: 30vh;
+  margin-bottom: 8vh;
 }
 
 .discovery-footer__content {
