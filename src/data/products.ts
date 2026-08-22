@@ -116,6 +116,18 @@ export const imageColors: Record<string, {hue: number, sat: number}> = {
   '/images/jeans/jeans3[UP].png': { hue: 234, sat: 15 },
 };
 
+export const imagePalettes: Record<string, string[]> = {
+  '/images/caps/1A.png': ['303 4% 70%', '352 51% 71%', '242 49% 65%'],
+  '/images/caps/1B.png': ['212 72% 63%', '167 72% 62%', '221 72% 50%'],
+  '/images/caps/1C.png': ['27 42% 66%', '18 38% 60%', '284 4% 54%'],
+  '/images/caps/1D.png': ['264 33% 54%', '353 72% 63%', '0 25% 50%'],
+  '/images/tees/tee2[UP].png': ['271 4% 73%', '12 43% 68%', '285 42% 50%'],
+  '/images/tees/tee[UP].png': ['27 57% 52%', '32 4% 57%', '32 4% 66%'],
+  '/images/jeans/jeans1[UP].png': ['100 4% 66%', '223 28% 62%', '66 26% 54%'],
+  '/images/jeans/jeans2[UP].png': ['36 42% 66%', '211 59% 54%', '44 32% 61%'],
+  '/images/jeans/jeans3[UP].png': ['233 4% 58%', '210 27% 49%', '260 24% 53%'],
+};
+
 export const getPlaceholderGradient = (category: Category, index: number, imagePath?: string): React.CSSProperties => {
   let hue = 0;
   let sat = 0;
@@ -130,9 +142,22 @@ export const getPlaceholderGradient = (category: Category, index: number, imageP
     sat = 15 + (hash % 20); // 15-35%
   }
   
+  /* Three real colours sampled from the photo, used for the card's spray.
+     Falls back to a spread around the single extracted hue when an image
+     hasn't been run through extract_palettes.py yet. */
+  const palette =
+    (imagePath && imagePalettes[imagePath]) || [
+      `${hue} ${Math.max(sat, 22)}% 62%`,
+      `${(hue + 200) % 360} 4% 58%`,
+      `${(hue + 38) % 360} ${Math.max(sat, 18)}% 66%`,
+    ];
+
   return {
     '--prod-hue': hue,
-    '--prod-sat': `${sat}%`
+    '--prod-sat': `${sat}%`,
+    '--spray-1': palette[0],
+    '--spray-2': palette[1] ?? palette[0],
+    '--spray-3': palette[2] ?? palette[0],
   } as React.CSSProperties;
 };
 
@@ -145,7 +170,7 @@ export const products: Product[] = [
     category: 'caps',
     price: 32,
     currency: 'EUR',
-    images: ['/images/caps/cap1[UP].png'],
+    images: ['/images/caps/1A.png'],
     sizes: ['One Size'],
     colors: [
       { name: 'Stone', hex: '#b8a99a' },
@@ -163,7 +188,7 @@ export const products: Product[] = [
     category: 'caps',
     price: 32,
     currency: 'EUR',
-    images: ['/images/caps/cap2[UP].png'],
+    images: ['/images/caps/1B.png'],
     sizes: ['One Size'],
     colors: [
       { name: 'Forest', hex: '#3d5a3e' },
@@ -179,7 +204,7 @@ export const products: Product[] = [
     category: 'caps',
     price: 32,
     currency: 'EUR',
-    images: ['/images/caps/cap-03.jpg'],
+    images: ['/images/caps/1C.png'],
     sizes: ['One Size'],
     colors: [
       { name: 'Navy', hex: '#1a2744' },
@@ -195,7 +220,7 @@ export const products: Product[] = [
     category: 'caps',
     price: 32,
     currency: 'EUR',
-    images: ['/images/caps/cap-04.jpg'],
+    images: ['/images/caps/1D.png'],
     sizes: ['One Size'],
     colors: [
       { name: 'Olive', hex: '#6b7c4e' },
@@ -206,23 +231,7 @@ export const products: Product[] = [
     inStock: true,
     isNew: false,
   },
-  {
-    id: 'cap-005',
-    name: 'Knit Beanie',
-    category: 'caps',
-    price: 32,
-    currency: 'EUR',
-    images: ['/images/caps/cap-05.jpg'],
-    sizes: ['One Size'],
-    colors: [
-      { name: 'Charcoal', hex: '#3a3a3a' },
-      { name: 'Oatmeal', hex: '#d9cfc0' },
-    ],
-    description: 'Ribbed merino wool beanie with rolled cuff. Embroidered wordmark. Made in Portugal.',
-    season: 'SS26',
-    inStock: true,
-  },
-
+  
   // ═══ TEES — €64 ═══
   {
     id: 'tee-001',
@@ -542,46 +551,7 @@ export const products: Product[] = [
   },
 
   // ═══ EXTRA CAPS ═══
-  {
-    id: 'cap-006',
-    name: 'Mesh Trucker Cap',
-    category: 'caps',
-    price: 32,
-    currency: 'EUR',
-    images: [],
-    sizes: ['One Size'],
-    colors: [{ name: 'Black', hex: '#111' }],
-    description: 'Classic trucker silhouette with mesh back panels. Embroidered patch logo.',
-    season: 'SS26',
-    inStock: true,
-  },
-  {
-    id: 'cap-007',
-    name: 'Waxed Cotton Cap',
-    category: 'caps',
-    price: 32,
-    currency: 'EUR',
-    images: [],
-    sizes: ['S/M', 'L/XL'],
-    colors: [{ name: 'Olive', hex: '#4a5a3a' }],
-    description: 'Weather-resistant waxed cotton cap. Brass eyelets and leather strap.',
-    season: 'SS26',
-    inStock: true,
-  },
-  {
-    id: 'cap-008',
-    name: 'Linen Bucket Hat',
-    category: 'caps',
-    price: 32,
-    currency: 'EUR',
-    images: [],
-    sizes: ['S/M', 'L/XL'],
-    colors: [{ name: 'Natural', hex: '#e8dcc8' }],
-    description: 'Lightweight linen bucket hat with raw edge brim. Tonal logo.',
-    season: 'SS26',
-    inStock: true,
-  },
-
+      
   // ═══ EXTRA TEES ═══
   {
     id: 'tee-006',
